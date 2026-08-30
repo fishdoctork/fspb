@@ -1,1307 +1,596 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>식품안전정책국장 보고 대기 상황판</title>
-  <style>
-    :root {
-      --navy: #16325C;
-      --bg: #EEF1F6;
-      --line: #DBE2EC;
-      --ink: #1E293B;
-      --muted: #64748B;
-      --soft: #94A3B8;
-      --card: #fff;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", -apple-system, sans-serif;
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-      font-family: inherit;
-      font-size: 15px;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 11px 12px;
-      border-radius: 8px;
-      border: 1px solid #CBD5E1;
-      background: #fff;
-      color: var(--ink);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 90px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      margin-bottom: 12px;
-    }
-
-    .flabel {
-      font-size: 12px;
-      font-weight: 700;
-      color: #475569;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      border-radius: 8px;
-      border: 1px solid #CBD5E1;
-      background: #fff;
-      color: #334155;
-      padding: 8px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      min-height: 40px;
-    }
-
-    .btn.primary {
-      background: var(--navy);
-      border-color: var(--navy);
-      color: #fff;
-      font-weight: 700;
-    }
-
-    .btn.danger {
-      color: #B91C1C;
-      border-color: #FCA5A5;
-    }
-
-    .btn.big {
-      width: 100%;
-      min-height: 48px;
-      font-size: 15px;
-      font-weight: 800;
-    }
-
-    .hint {
-      font-size: 12px;
-      color: var(--soft);
-      line-height: 1.6;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    /* 인증 화면 */
-    .auth-wrap {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    .auth-card {
-      width: 100%;
-      max-width: 420px;
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(22, 50, 92, .10);
-      padding: 28px 22px;
-    }
-
-    .auth-eyebrow {
-      font-size: 10px;
-      letter-spacing: .2em;
-      color: var(--soft);
-      font-weight: 700;
-      text-align: center;
-    }
-
-    .auth-title {
-      font-size: 22px;
-      font-weight: 900;
-      text-align: center;
-      color: var(--navy);
-      margin: 8px 0 20px;
-      line-height: 1.35;
-    }
-
-    .tabs {
-      display: flex;
-      background: #F1F5F9;
-      border-radius: 10px;
-      padding: 4px;
-      margin-bottom: 18px;
-    }
-
-    .tabs button {
-      flex: 1;
-      padding: 9px 0;
-      border: none;
-      background: transparent;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--muted);
-      cursor: pointer;
-    }
-
-    .tabs button.on {
-      background: var(--navy);
-      color: #fff;
-    }
-
-    .auth-msg {
-      margin-top: 14px;
-      background: #FEF9C3;
-      border: 1px solid #FDE047;
-      color: #713F12;
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    /* 헤더 */
-    header {
-      background: var(--navy);
-      color: #fff;
-      padding: 16px 16px 0;
-    }
-
-    .hd-inner {
-      max-width: 720px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .eyebrow {
-      font-size: 10px;
-      letter-spacing: .18em;
-      opacity: .7;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    h1 {
-      font-size: 19px;
-      font-weight: 900;
-      margin: 0;
-      line-height: 1.35;
-      word-break: keep-all;
-    }
-
-    .hd-btns {
-      display: flex;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
-    .ghost {
-      font-size: 12px;
-      padding: 7px 11px;
-      border-radius: 7px;
-      border: 1px solid rgba(255, 255, 255, .35);
-      background: transparent;
-      color: #fff;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .user-line {
-      max-width: 720px;
-      margin: 6px auto 0;
-      font-size: 12px;
-      opacity: .8;
-    }
-
-    .dir-bar {
-      max-width: 720px;
-      margin: 12px auto 0;
-      background: rgba(255, 255, 255, .10);
-      border-radius: 12px 12px 0 0;
-      padding: 12px 14px;
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      flex-wrap: wrap;
-    }
-
-    .dir-dot {
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .dir-label {
-      font-size: 13px;
-      font-weight: 700;
-      opacity: .85;
-    }
-
-    .dir-value {
-      font-size: 15px;
-      font-weight: 900;
-    }
-
-    main {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 16px 12px 44px;
-    }
-
-    .sec-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--navy);
-    }
-
-    /* 공지 */
-    .notice-box {
-      background: #FFFBEB;
-      border: 1px solid #FDE68A;
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-bottom: 16px;
-    }
-
-    .notice-head {
-      font-size: 12px;
-      font-weight: 800;
-      color: #92400E;
-      letter-spacing: .04em;
-      margin-bottom: 8px;
-    }
-
-    .notice-item {
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-      padding: 6px 0;
-    }
-
-    .notice-text {
-      font-size: 14px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .notice-meta {
-      font-size: 11px;
-      color: #B45309;
-      margin-top: 2px;
-    }
-
-    /* 캘린더 */
-    .cal {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 14px 12px;
-      margin-bottom: 18px;
-      box-shadow: 0 2px 8px rgba(22, 50, 92, .05);
-    }
-
-    .cal-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
-    }
-
-    .cal-nav {
-      display: flex;
-      gap: 4px;
-    }
-
-    .cal-nav button {
-      font-size: 12px;
-      padding: 6px 9px;
-      border-radius: 7px;
-      border: 1px solid #CBD5E1;
-      background: #F8FAFC;
-      color: #334155;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .cal-strip {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .cal-day {
-      flex: 0 0 108px;
-      min-height: 128px;
-      border-radius: 11px;
-      border: 1px solid #E2E8F0;
-      background: #F8FAFC;
-      padding: 9px 8px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      text-align: left;
-    }
-
-    .cal-day.sel {
-      background: var(--navy);
-      border-color: var(--navy);
-      color: #fff;
-    }
-
-    .cal-dow {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--muted);
-    }
-
-    .cal-dow.red {
-      color: #DC2626;
-    }
-
-    .cal-dow.blue {
-      color: #2563EB;
-    }
-
-    .cal-day.sel .cal-dow {
-      color: #fff;
-    }
-
-    .cal-num {
-      font-size: 18px;
-      font-weight: 900;
-      width: 28px;
-      line-height: 28px;
-      text-align: center;
-      border-radius: 50%;
-    }
-
-    .cal-num.red {
-      color: #DC2626;
-    }
-
-    .cal-num.blue {
-      color: #2563EB;
-    }
-
-    .cal-day.sel .cal-num {
-      color: #fff;
-    }
-
-    .cal-num.today {
-      border: 2px solid #F59E0B;
-      line-height: 24px;
-    }
-
-    .cal-items {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      margin-top: 2px;
-    }
-
-    .cal-item {
-      font-size: 10.5px;
-      font-weight: 600;
-      border-radius: 5px;
-      padding: 3px 5px;
-      background: #F1F5F9;
-      color: #475569;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .cal-item.hol {
-      background: #FEE2E2;
-      color: #B91C1C;
-      font-weight: 700;
-    }
-
-    .cal-day.sel .cal-item {
-      background: rgba(255, 255, 255, .18);
-      color: #fff;
-    }
-
-    .cal-day.sel .cal-item.hol {
-      background: rgba(254, 202, 202, .35);
-      color: #FECACA;
-    }
-
-    .cal-more {
-      font-size: 10px;
-      font-weight: 700;
-      color: #6366F1;
-    }
-
-    .cal-day.sel .cal-more {
-      color: #E0E7FF;
-    }
-
-    .cal-empty {
-      font-size: 10.5px;
-      opacity: .4;
-    }
-
-    .cal-hint {
-      font-size: 11.5px;
-      color: var(--soft);
-      margin: 8px 2px 0;
-      line-height: 1.5;
-    }
-
-    /* 대기열 */
-    .queue-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-
-    .counter {
-      font-size: 13px;
-      color: #475569;
-    }
-
-    .counter b {
-      font-size: 20px;
-      font-weight: 900;
-      color: var(--navy);
-    }
-
-    .add-btn {
-      width: 100%;
-      padding: 15px;
-      border-radius: 11px;
-      border: 2px dashed var(--soft);
-      background: #fff;
-      color: var(--navy);
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      margin-bottom: 14px;
-      min-height: 52px;
-    }
-
-    .form-card {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 2px 8px rgba(22, 50, 92, .06);
-    }
-
-    .form-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--navy);
-      margin-bottom: 12px;
-    }
-
-    .form-title small {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--muted);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 10px;
-    }
-
-    .form-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 6px;
-    }
-
-    .queue {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .ticket {
-      display: flex;
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(22, 50, 92, .06);
-    }
-
-    .ticket.muted {
-      opacity: .65;
-    }
-
-    .stub {
-      width: 62px;
-      flex-shrink: 0;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1px;
-      background: var(--navy);
-      border-right: 2px dashed rgba(255, 255, 255, .85);
-    }
-
-    .stub.urgent {
-      background: #B91C1C;
-    }
-
-    .stub.unassigned {
-      background: #64748B;
-    }
-
-    .stub.finished {
-      background: #CBD5E1;
-      color: #64748B;
-    }
-
-    .ticket.done {
-      background: #F8FAFC;
-    }
-
-    .ticket.done .t-title {
-      text-decoration: line-through;
-      text-decoration-thickness: 2px;
-      color: #94A3B8;
-    }
-
-    .ticket.done .t-who,
-    .ticket.done .t-meta {
-      color: #B0BAC9;
-      text-decoration: line-through;
-    }
-
-    .status-sel {
-      width: auto;
-      padding: 8px 10px;
-      font-size: 13px;
-      font-weight: 700;
-      border-radius: 8px;
-      border: 1px solid #CBD5E1;
-      background: #fff;
-      color: #334155;
-      min-height: 40px;
-    }
-
-    .order-form {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-top: 9px;
-      padding-top: 9px;
-      border-top: 1px dashed #E2E8F0;
-    }
-
-    .order-form input {
-      width: 80px;
-      padding: 8px 10px;
-    }
-
-    .stub-label {
-      font-size: 9px;
-      letter-spacing: .15em;
-      opacity: .8;
-      font-weight: 700;
-    }
-
-    .stub-no {
-      font-size: 24px;
-      font-weight: 900;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .t-body {
-      flex: 1;
-      padding: 11px 12px;
-      min-width: 0;
-    }
-
-    .t-top {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      flex-wrap: wrap;
-      margin-bottom: 5px;
-    }
-
-    .badge {
-      font-size: 12px;
-      font-weight: 800;
-      border-radius: 5px;
-      padding: 3px 8px;
-    }
-
-    .badge.urgent {
-      color: #fff;
-      background: #B91C1C;
-    }
-
-    .t-meta {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .t-title {
-      font-size: 15px;
-      font-weight: 800;
-      margin-bottom: 3px;
-      color: #0F172A;
-      word-break: keep-all;
-    }
-
-    .t-who {
-      font-size: 13px;
-      color: #475569;
-      margin-bottom: 9px;
-    }
-
-    .t-actions {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .empty {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 44px 20px;
-      text-align: center;
-      color: var(--muted);
-    }
-
-    .empty b {
-      display: block;
-      font-size: 15px;
-      color: #334155;
-      margin-bottom: 6px;
-    }
-
-    footer {
-      text-align: center;
-      font-size: 11.5px;
-      color: var(--soft);
-      margin-top: 26px;
-      line-height: 1.6;
-    }
-
-    /* 토스트 */
-    #toast {
-      position: fixed;
-      bottom: 22px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--navy);
-      color: #fff;
-      padding: 11px 18px;
-      border-radius: 9px;
-      font-size: 14px;
-      font-weight: 600;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, .25);
-      z-index: 90;
-      max-width: 88vw;
-      text-align: center;
-      transition: opacity .2s;
-    }
-
-    /* 관리자 패널 */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, .5);
-      z-index: 80;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-    }
-
-    .panel {
-      width: 100%;
-      max-width: 560px;
-      max-height: 88vh;
-      background: #fff;
-      border-radius: 18px 18px 0 0;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .panel-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 18px 10px;
-    }
-
-    .panel-title {
-      font-size: 17px;
-      font-weight: 900;
-      color: var(--navy);
-    }
-
-    .close-btn {
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
-      border: 1px solid #E2E8F0;
-      background: #F8FAFC;
-      font-size: 15px;
-      cursor: pointer;
-      color: #475569;
-    }
-
-    .panel-tabs {
-      display: flex;
-      gap: 4px;
-      padding: 0 14px 10px;
-      overflow-x: auto;
-    }
-
-    .panel-tabs button {
-      flex-shrink: 0;
-      padding: 8px 13px;
-      border-radius: 8px;
-      border: 1px solid #E2E8F0;
-      background: #F8FAFC;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--muted);
-      cursor: pointer;
-    }
-
-    .panel-tabs button.on {
-      background: var(--navy);
-      border-color: var(--navy);
-      color: #fff;
-    }
-
-    .panel-body {
-      overflow-y: auto;
-      padding: 6px 18px 30px;
-    }
-
-    .panel-sub {
-      font-size: 13px;
-      font-weight: 800;
-      color: #334155;
-      margin: 16px 0 8px;
-    }
-
-    .user-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      border: 1px solid #E2E8F0;
-      border-radius: 10px;
-      padding: 10px 12px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-    }
-
-    .u-name {
-      font-size: 14px;
-      font-weight: 700;
-      color: #0F172A;
-    }
-
-    .u-meta {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .u-btns {
-      display: flex;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
-    /* 로딩 */
-    .loading-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #F59E0B, #16325C);
-      z-index: 99;
-      animation: slide 1s linear infinite;
-      background-size: 200% 100%;
-    }
-
-    @keyframes slide {
-      from {
-        background-position: 0 0;
-      }
-
-      to {
-        background-position: 200% 0;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>식품안전정책국장 보고 대기 상황판</title>
+<style>
+  :root{
+    --navy:#16325C; --bg:#EEF1F6; --line:#DBE2EC; --ink:#1E293B;
+    --muted:#64748B; --soft:#94A3B8; --card:#fff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",-apple-system,sans-serif;
+  }
+  button,input,select,textarea{font-family:inherit; font-size:15px;}
+  input,select,textarea{
+    width:100%; padding:11px 12px; border-radius:8px; border:1px solid #CBD5E1;
+    background:#fff; color:var(--ink);
+  }
+  textarea{resize:vertical; min-height:90px;}
+  .field{display:flex; flex-direction:column; gap:5px; margin-bottom:12px;}
+  .flabel{font-size:12px; font-weight:700; color:#475569;}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:4px;
+    border-radius:8px; border:1px solid #CBD5E1; background:#fff; color:#334155;
+    padding:8px 14px; font-size:13px; font-weight:600; cursor:pointer; min-height:40px;
+  }
+  .btn.primary{background:var(--navy); border-color:var(--navy); color:#fff; font-weight:700;}
+  .btn.danger{color:#B91C1C; border-color:#FCA5A5;}
+  .btn.big{width:100%; min-height:48px; font-size:15px; font-weight:800;}
+  .hint{font-size:12px; color:var(--soft); line-height:1.6;}
+  .hidden{display:none !important;}
+
+  /* 인증 화면 */
+  .auth-wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:16px;}
+  .auth-card{
+    width:100%; max-width:420px; background:#fff; border:1px solid var(--line);
+    border-radius:16px; box-shadow:0 8px 32px rgba(22,50,92,.10); padding:28px 22px;
+  }
+  .auth-eyebrow{font-size:10px; letter-spacing:.2em; color:var(--soft); font-weight:700; text-align:center;}
+  .auth-title{font-size:22px; font-weight:900; text-align:center; color:var(--navy); margin:8px 0 20px; line-height:1.35;}
+  .tabs{display:flex; background:#F1F5F9; border-radius:10px; padding:4px; margin-bottom:18px;}
+  .tabs button{flex:1; padding:9px 0; border:none; background:transparent; border-radius:8px;
+    font-size:14px; font-weight:700; color:var(--muted); cursor:pointer;}
+  .tabs button.on{background:var(--navy); color:#fff;}
+  .auth-msg{margin-top:14px; background:#FEF9C3; border:1px solid #FDE047; color:#713F12;
+    border-radius:8px; padding:10px 12px; font-size:13px; line-height:1.5;}
+
+  /* 헤더 */
+  header{background:var(--navy); color:#fff; padding:16px 16px 0;}
+  .hd-inner{max-width:720px; margin:0 auto; display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;}
+  .eyebrow{font-size:10px; letter-spacing:.18em; opacity:.7; font-weight:700; margin-bottom:4px;}
+  h1{font-size:19px; font-weight:900; margin:0; line-height:1.35; word-break:keep-all;}
+  .hd-btns{display:flex; gap:6px; flex-shrink:0;}
+  .ghost{font-size:12px; padding:7px 11px; border-radius:7px; border:1px solid rgba(255,255,255,.35);
+    background:transparent; color:#fff; cursor:pointer; font-weight:600;}
+  .user-line{max-width:720px; margin:6px auto 0; font-size:12px; opacity:.8;}
+  .dir-bar{max-width:720px; margin:12px auto 0; background:rgba(255,255,255,.10);
+    border-radius:12px 12px 0 0; padding:12px 14px; display:flex; align-items:center; gap:9px; flex-wrap:wrap;}
+  .dir-dot{width:11px; height:11px; border-radius:50%; flex-shrink:0;}
+  .dir-label{font-size:13px; font-weight:700; opacity:.85;}
+  .dir-value{font-size:15px; font-weight:900;}
+
+  main{max-width:720px; margin:0 auto; padding:16px 12px 44px;}
+  .sec-title{font-size:15px; font-weight:800; color:var(--navy);}
+
+  /* 공지 */
+  .notice-box{background:#FFFBEB; border:1px solid #FDE68A; border-radius:12px; padding:12px 14px; margin-bottom:16px;}
+  .notice-head{font-size:12px; font-weight:800; color:#92400E; letter-spacing:.04em; margin-bottom:8px;}
+  .notice-item{display:flex; gap:8px; align-items:flex-start; padding:6px 0;}
+  .notice-text{font-size:14px; line-height:1.5; white-space:pre-wrap; word-break:break-word;}
+  .notice-meta{font-size:11px; color:#B45309; margin-top:2px;}
+
+  /* 캘린더 */
+  .cal{background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 12px; margin-bottom:18px;
+    box-shadow:0 2px 8px rgba(22,50,92,.05);}
+  .cal-head{display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;}
+  .cal-nav{display:flex; gap:4px;}
+  .cal-nav button{font-size:12px; padding:6px 9px; border-radius:7px; border:1px solid #CBD5E1;
+    background:#F8FAFC; color:#334155; cursor:pointer; font-weight:600;}
+  .cal-strip{display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch;}
+  .cal-day{flex:0 0 108px; min-height:128px; border-radius:11px; border:1px solid #E2E8F0; background:#F8FAFC;
+    padding:9px 8px; cursor:pointer; display:flex; flex-direction:column; gap:5px; text-align:left;}
+  .cal-day.sel{background:var(--navy); border-color:var(--navy); color:#fff;}
+  .cal-dow{font-size:11px; font-weight:800; color:var(--muted);}
+  .cal-dow.red{color:#DC2626;}
+  .cal-dow.blue{color:#2563EB;}
+  .cal-day.sel .cal-dow{color:#fff;}
+  .cal-num{font-size:18px; font-weight:900; width:28px; line-height:28px; text-align:center; border-radius:50%;}
+  .cal-num.red{color:#DC2626;}
+  .cal-num.blue{color:#2563EB;}
+  .cal-day.sel .cal-num{color:#fff;}
+  .cal-num.today{border:2px solid #F59E0B; line-height:24px;}
+  .cal-items{display:flex; flex-direction:column; gap:3px; margin-top:2px;}
+  .cal-item{font-size:10.5px; font-weight:600; border-radius:5px; padding:3px 5px; background:#F1F5F9; color:#475569;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .cal-item.hol{background:#FEE2E2; color:#B91C1C; font-weight:700;}
+  .cal-day.sel .cal-item{background:rgba(255,255,255,.18); color:#fff;}
+  .cal-day.sel .cal-item.hol{background:rgba(254,202,202,.35); color:#FECACA;}
+  .cal-more{font-size:10px; font-weight:700; color:#6366F1;}
+  .cal-day.sel .cal-more{color:#E0E7FF;}
+  .cal-empty{font-size:10.5px; opacity:.4;}
+  .cal-hint{font-size:11.5px; color:var(--soft); margin:8px 2px 0; line-height:1.5;}
+
+  /* 대기열 */
+  .queue-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:10px; flex-wrap:wrap;}
+  .counter{font-size:13px; color:#475569;}
+  .counter b{font-size:20px; font-weight:900; color:var(--navy);}
+  .add-btn{width:100%; padding:15px; border-radius:11px; border:2px dashed var(--soft); background:#fff;
+    color:var(--navy); font-size:15px; font-weight:800; cursor:pointer; margin-bottom:14px; min-height:52px;}
+  .form-card{background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px;
+    box-shadow:0 2px 8px rgba(22,50,92,.06);}
+  .form-title{font-size:15px; font-weight:800; color:var(--navy); margin-bottom:12px;}
+  .form-title small{font-size:12px; font-weight:600; color:var(--muted);}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px;}
+  .form-actions{display:flex; justify-content:flex-end; gap:8px; margin-top:6px;}
+
+  .queue{display:flex; flex-direction:column; gap:10px;}
+  .ticket{display:flex; background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden;
+    box-shadow:0 2px 8px rgba(22,50,92,.06);}
+  .ticket.muted{opacity:.65;}
+  .stub{width:62px; flex-shrink:0; color:#fff; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; gap:1px; background:var(--navy); border-right:2px dashed rgba(255,255,255,.85);}
+  .stub.urgent{background:#B91C1C;}
+  .stub.unassigned{background:#64748B;}
+  .stub.finished{background:#CBD5E1; color:#64748B;}
+  .ticket.done{background:#F8FAFC;}
+  .ticket.done .t-title{text-decoration:line-through; text-decoration-thickness:2px; color:#94A3B8;}
+  .ticket.done .t-who, .ticket.done .t-meta{color:#B0BAC9; text-decoration:line-through;}
+  .status-sel{width:auto; padding:8px 10px; font-size:13px; font-weight:700; border-radius:8px;
+    border:1px solid #CBD5E1; background:#fff; color:#334155; min-height:40px;}
+  .order-form{display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:9px;
+    padding-top:9px; border-top:1px dashed #E2E8F0;}
+  .order-form input{width:80px; padding:8px 10px;}
+  .stub-label{font-size:9px; letter-spacing:.15em; opacity:.8; font-weight:700;}
+  .stub-no{font-size:24px; font-weight:900; font-variant-numeric:tabular-nums;}
+  .t-body{flex:1; padding:11px 12px; min-width:0;}
+  .t-top{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:5px;}
+  .badge{font-size:12px; font-weight:800; border-radius:5px; padding:3px 8px;}
+  .badge.urgent{color:#fff; background:#B91C1C;}
+  .t-meta{font-size:12px; color:var(--muted);}
+  .t-title{font-size:15px; font-weight:800; margin-bottom:3px; color:#0F172A; word-break:keep-all;}
+  .t-who{font-size:13px; color:#475569; margin-bottom:9px;}
+  .t-actions{display:flex; gap:6px; flex-wrap:wrap;}
+  .empty{background:#fff; border:1px solid var(--line); border-radius:12px; padding:44px 20px; text-align:center; color:var(--muted);}
+  .empty b{display:block; font-size:15px; color:#334155; margin-bottom:6px;}
+  footer{text-align:center; font-size:11.5px; color:var(--soft); margin-top:26px; line-height:1.6;}
+
+  /* 토스트 */
+  #toast{position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:var(--navy); color:#fff;
+    padding:11px 18px; border-radius:9px; font-size:14px; font-weight:600; box-shadow:0 4px 16px rgba(0,0,0,.25);
+    z-index:90; max-width:88vw; text-align:center; transition:opacity .2s;}
+
+  /* 관리자 패널 */
+  .overlay{position:fixed; inset:0; background:rgba(15,23,42,.5); z-index:80; display:flex; align-items:flex-end; justify-content:center;}
+  .panel{width:100%; max-width:560px; max-height:88vh; background:#fff; border-radius:18px 18px 0 0;
+    display:flex; flex-direction:column;}
+  .panel-head{display:flex; justify-content:space-between; align-items:center; padding:16px 18px 10px;}
+  .panel-title{font-size:17px; font-weight:900; color:var(--navy);}
+  .close-btn{width:34px; height:34px; border-radius:8px; border:1px solid #E2E8F0; background:#F8FAFC;
+    font-size:15px; cursor:pointer; color:#475569;}
+  .panel-tabs{display:flex; gap:4px; padding:0 14px 10px; overflow-x:auto;}
+  .panel-tabs button{flex-shrink:0; padding:8px 13px; border-radius:8px; border:1px solid #E2E8F0; background:#F8FAFC;
+    font-size:13px; font-weight:700; color:var(--muted); cursor:pointer;}
+  .panel-tabs button.on{background:var(--navy); border-color:var(--navy); color:#fff;}
+  .panel-body{overflow-y:auto; padding:6px 18px 30px;}
+  .panel-sub{font-size:13px; font-weight:800; color:#334155; margin:16px 0 8px;}
+  .user-row{display:flex; justify-content:space-between; align-items:center; gap:10px; border:1px solid #E2E8F0;
+    border-radius:10px; padding:10px 12px; flex-wrap:wrap; margin-bottom:8px;}
+  .u-name{font-size:14px; font-weight:700; color:#0F172A;}
+  .u-meta{font-size:12px; color:var(--muted); margin-top:2px;}
+  .u-btns{display:flex; gap:6px; flex-shrink:0;}
+
+  /* 로딩 */
+  .loading-bar{position:fixed; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#F59E0B,#16325C);
+    z-index:99; animation:slide 1s linear infinite; background-size:200% 100%;}
+  @keyframes slide{from{background-position:0 0;} to{background-position:200% 0;}}
+</style>
 </head>
-
 <body>
 
-  <div id="loadingBar" class="loading-bar hidden"></div>
-  <div id="app"></div>
-  <div id="toast" class="hidden"></div>
+<div id="loadingBar" class="loading-bar hidden"></div>
+<div id="app"></div>
+<div id="toast" class="hidden"></div>
 
-  <script>
-    /* ═══════════════════════════════════════════════════
-       ★ 설정: 아래 따옴표 안에 Apps Script 배포 URL을 붙여넣으세요.
-       예) const SCRIPT_URL = "https://script.google.com/macros/s/AKfy.../exec";
-       설정 방법은 [설치안내.md] 참고
-       ═══════════════════════════════════════════════════ */
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvxMsLRadbQCvixYUnisgk_hJ2QN2rpS4REcy6CLcC18C1rWKFcS5RZi82-5AzIaYw/exec";
+<script>
+/* ═══════════════════════════════════════════════════
+   ★ 설정: 아래 따옴표 안에 Apps Script 배포 URL을 붙여넣으세요.
+   예) const SCRIPT_URL = "https://script.google.com/macros/s/AKfy.../exec";
+   설정 방법은 [설치안내.md] 참고
+   ═══════════════════════════════════════════════════ */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvxMsLRadbQCvixYUnisgk_hJ2QN2rpS4REcy6CLcC18C1rWKFcS5RZi82-5AzIaYw/exec";
 
-    /* ───── 유틸 ───── */
-    const DAYS = ["일", "월", "화", "수", "목", "금", "토"];
-    const fmtDate = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-    const TODAY = () => fmtDate(new Date());
-    const parseDate = iso => new Date(iso + "T00:00:00");
-    const prettyDate = iso => { const d = parseDate(iso); return `${d.getMonth() + 1}월 ${d.getDate()}일 (${DAYS[d.getDay()]})`; };
-    const mondayOf = iso => { const d = parseDate(iso); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return fmtDate(d); };
-    const addDays = (iso, n) => { const d = parseDate(iso); d.setDate(d.getDate() + n); return fmtDate(d); };
-    const weekDates = mon => Array.from({ length: 7 }, (_, i) => addDays(mon, i));
-    const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-    const uid = () => `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+/* ───── 유틸 ───── */
+const DAYS = ["일","월","화","수","목","금","토"];
+const fmtDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const TODAY = () => fmtDate(new Date());
+const parseDate = iso => new Date(iso + "T00:00:00");
+const prettyDate = iso => { const d = parseDate(iso); return `${d.getMonth()+1}월 ${d.getDate()}일 (${DAYS[d.getDay()]})`; };
+const mondayOf = iso => { const d = parseDate(iso); d.setDate(d.getDate() - ((d.getDay()+6)%7)); return fmtDate(d); };
+const addDays = (iso,n) => { const d = parseDate(iso); d.setDate(d.getDate()+n); return fmtDate(d); };
+const weekDates = mon => Array.from({length:7},(_,i)=>addDays(mon,i));
+const esc = s => String(s??"").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => `${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
 
-    /* 공휴일 목록 (매년 말 다음 해 날짜를 추가해 주세요. 형식: "YYYY-MM-DD":"이름") */
-    const HOLIDAYS = {
-      /* 2026년 */
-      "2026-01-01": "신정",
-      "2026-02-16": "설 연휴", "2026-02-17": "설날", "2026-02-18": "설 연휴",
-      "2026-03-01": "삼일절", "2026-03-02": "대체공휴일",
-      "2026-05-05": "어린이날",
-      "2026-05-24": "부처님오신날", "2026-05-25": "대체공휴일",
-      "2026-06-06": "현충일",
-      "2026-08-15": "광복절", "2026-08-17": "대체공휴일",
-      "2026-09-24": "추석 연휴", "2026-09-25": "추석", "2026-09-26": "추석 연휴",
-      "2026-10-03": "개천절", "2026-10-05": "대체공휴일",
-      "2026-10-09": "한글날",
-      "2026-12-25": "성탄절",
-      /* 2027년 (예정 — 정부 발표 후 확인 필요) */
-      "2027-01-01": "신정",
-      "2027-02-06": "설 연휴", "2027-02-07": "설날", "2027-02-08": "설 연휴", "2027-02-09": "대체공휴일",
-      "2027-03-01": "삼일절",
-      "2027-05-05": "어린이날",
-      "2027-05-13": "부처님오신날",
-      "2027-06-06": "현충일",
-      "2027-08-15": "광복절", "2027-08-16": "대체공휴일",
-      "2027-09-14": "추석 연휴", "2027-09-15": "추석", "2027-09-16": "추석 연휴",
-      "2027-10-03": "개천절", "2027-10-04": "대체공휴일",
-      "2027-10-09": "한글날", "2027-10-11": "대체공휴일",
-      "2027-12-25": "성탄절", "2027-12-27": "대체공휴일",
-    };
+/* 공휴일 목록 (매년 말 다음 해 날짜를 추가해 주세요. 형식: "YYYY-MM-DD":"이름") */
+const HOLIDAYS = {
+  /* 2026년 */
+  "2026-01-01":"신정",
+  "2026-02-16":"설 연휴","2026-02-17":"설날","2026-02-18":"설 연휴",
+  "2026-03-01":"삼일절","2026-03-02":"대체공휴일",
+  "2026-05-05":"어린이날",
+  "2026-05-24":"부처님오신날","2026-05-25":"대체공휴일",
+  "2026-06-06":"현충일",
+  "2026-08-15":"광복절","2026-08-17":"대체공휴일",
+  "2026-09-24":"추석 연휴","2026-09-25":"추석","2026-09-26":"추석 연휴",
+  "2026-10-03":"개천절","2026-10-05":"대체공휴일",
+  "2026-10-09":"한글날",
+  "2026-12-25":"성탄절",
+  /* 2027년 (예정 — 정부 발표 후 확인 필요) */
+  "2027-01-01":"신정",
+  "2027-02-06":"설 연휴","2027-02-07":"설날","2027-02-08":"설 연휴","2027-02-09":"대체공휴일",
+  "2027-03-01":"삼일절",
+  "2027-05-05":"어린이날",
+  "2027-05-13":"부처님오신날",
+  "2027-06-06":"현충일",
+  "2027-08-15":"광복절","2027-08-16":"대체공휴일",
+  "2027-09-14":"추석 연휴","2027-09-15":"추석","2027-09-16":"추석 연휴",
+  "2027-10-03":"개천절","2027-10-04":"대체공휴일",
+  "2027-10-09":"한글날","2027-10-11":"대체공휴일",
+  "2027-12-25":"성탄절","2027-12-27":"대체공휴일",
+};
 
-    const STATUS = {
-      waiting: { label: "대기", color: "#B45309", bg: "#FEF3C7" },
-      reporting: { label: "보고 중", color: "#1D4ED8", bg: "#DBEAFE" },
-      done: { label: "완료", color: "#15803D", bg: "#DCFCE7" },
-      hold: { label: "보류", color: "#64748B", bg: "#F1F5F9" },
-    };
-    const DIRECTOR_OPTS = {
-      available: { label: "보고 가능", dot: "#22C55E" },
-      meeting: { label: "회의 중", dot: "#F59E0B" },
-      trip: { label: "출장", dot: "#EF4444" },
-      absent: { label: "부재 중", dot: "#94A3B8" },
-      custom: { label: "기타 (직접 입력)", dot: "#8B5CF6" },
-    };
+const STATUS = {
+  waiting:{label:"대기", color:"#B45309", bg:"#FEF3C7"},
+  reporting:{label:"보고 중", color:"#1D4ED8", bg:"#DBEAFE"},
+  done:{label:"완료", color:"#15803D", bg:"#DCFCE7"},
+  hold:{label:"보류", color:"#64748B", bg:"#F1F5F9"},
+};
+const DIRECTOR_OPTS = {
+  available:{label:"보고 가능", dot:"#22C55E"},
+  meeting:{label:"회의 중", dot:"#F59E0B"},
+  trip:{label:"출장", dot:"#EF4444"},
+  absent:{label:"부재 중", dot:"#94A3B8"},
+  custom:{label:"기타 (직접 입력)", dot:"#8B5CF6"},
+};
 
-    /* ───── 서버 통신 ───── */
-    async function api(payload) {
-      const bar = document.getElementById("loadingBar");
-      bar.classList.remove("hidden");
-      try {
-        const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
-        const data = await res.json();
-        return data;
-      } catch (e) {
-        return { ok: false, error: "network" };
-      } finally {
-        bar.classList.add("hidden");
-      }
-    }
+/* ───── 서버 통신 ───── */
+async function api(payload){
+  const bar = document.getElementById("loadingBar");
+  bar.classList.remove("hidden");
+  try{
+    const res = await fetch(SCRIPT_URL, { method:"POST", body: JSON.stringify(payload) });
+    const data = await res.json();
+    return data;
+  }catch(e){
+    return { ok:false, error:"network" };
+  }finally{
+    bar.classList.add("hidden");
+  }
+}
 
-    /* ───── 상태 ───── */
-    const S = {
-      session: null,          // {name, dept, phone, isAdmin}
-      authTab: "login",
-      selDate: TODAY(),
-      weekMon: mondayOf(TODAY()),
-      schedule: {},
-      notices: [],
-      director: { status: "available", custom: "" },
-      reports: [],
-      showForm: false,
-      editingId: null,
-      orderingId: null,
-      adminOpen: false,
-      adminTab: "users",
-      adminWeekMon: mondayOf(TODAY()),
-      editingNoticeId: null,
-      users: null,
-      adminExists: null,
-      editDay: TODAY(),
-      loaded: false,
-    };
-    try {
-      const saved = localStorage.getItem("rb_session");
-      if (saved) S.session = JSON.parse(saved);
-    } catch (e) { }
+/* ───── 상태 ───── */
+const S = {
+  session: null,          // {name, dept, phone, isAdmin}
+  authTab: "login",
+  selDate: TODAY(),
+  weekMon: mondayOf(TODAY()),
+  schedule: {},
+  notices: [],
+  director: {status:"available", custom:""},
+  reports: [],
+  showForm: false,
+  editingId: null,
+  orderingId: null,
+  adminOpen: false,
+  adminTab: "users",
+  adminWeekMon: mondayOf(TODAY()),
+  editingNoticeId: null,
+  users: null,
+  adminExists: null,
+  editDay: TODAY(),
+  loaded: false,
+};
+try{
+  const saved = localStorage.getItem("rb_session");
+  if(saved) S.session = JSON.parse(saved);
+}catch(e){}
 
-    let toastTimer = null;
-    function toast(msg) {
-      const t = document.getElementById("toast");
-      t.textContent = msg;
-      t.classList.remove("hidden");
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => t.classList.add("hidden"), 2600);
-    }
+let toastTimer = null;
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.add("hidden"), 2600);
+}
 
-    /* ───── 데이터 로드 ───── */
-    async function refreshBoard() {
-      const r = await api({ action: "getMany", keys: ["schedule", "notices", "director", "reports:" + S.selDate] });
-      if (!r.ok) { if (!S.loaded) toast("서버에 연결할 수 없습니다. 인터넷 연결을 확인해 주세요."); return; }
-      S.schedule = r.values["schedule"] || {};
-      S.notices = Array.isArray(r.values["notices"]) ? r.values["notices"] : [];
-      S.director = (r.values["director"] && r.values["director"].status) ? r.values["director"] : { status: "available", custom: "" };
-      S.reports = Array.isArray(r.values["reports:" + S.selDate]) ? r.values["reports:" + S.selDate] : [];
-      S.loaded = true;
-      render();
-    }
+/* ───── 데이터 로드 ───── */
+async function refreshBoard(){
+  const r = await api({ action:"getMany", keys:["schedule","notices","director","reports:"+S.selDate] });
+  if(!r.ok){ if(!S.loaded) toast("서버에 연결할 수 없습니다. 인터넷 연결을 확인해 주세요."); return; }
+  S.schedule = r.values["schedule"] || {};
+  S.notices  = Array.isArray(r.values["notices"]) ? r.values["notices"] : [];
+  S.director = (r.values["director"] && r.values["director"].status) ? r.values["director"] : {status:"available",custom:""};
+  S.reports  = Array.isArray(r.values["reports:"+S.selDate]) ? r.values["reports:"+S.selDate] : [];
+  S.loaded = true;
+  render();
+}
 
-    /* ───── 인증 ───── */
-    async function doLogin() {
-      const name = val("f_name"), phone = val("f_phone");
-      if (!name || !phone) return toast("성명과 핸드폰번호를 입력해 주세요.");
-      const r = await api({ action: "get", key: "users" });
-      if (!r.ok) return toast("서버 연결에 실패했습니다.");
-      const users = Array.isArray(r.value) ? r.value : [];
-      const digits = phone.replace(/\D/g, "");
-      const u = users.find(x => x.name === name && String(x.phone).replace(/\D/g, "") === digits);
-      if (!u) return toast("신청 내역이 없습니다. [사용 신청] 탭에서 먼저 신청해 주세요.");
-      if (u.status === "pending") return toast("관리자 승인 대기 중입니다.");
-      if (u.status !== "approved") return toast("신청이 반려되었습니다. 관리자에게 문의해 주세요.");
-      setSession({ name: u.name, dept: u.dept, phone: u.phone, isAdmin: false });
-    }
+/* ───── 인증 ───── */
+async function doLogin(){
+  const name = val("f_name"), phone = val("f_phone");
+  if(!name || !phone) return toast("성명과 핸드폰번호를 입력해 주세요.");
+  const r = await api({ action:"get", key:"users" });
+  if(!r.ok) return toast("서버 연결에 실패했습니다.");
+  const users = Array.isArray(r.value) ? r.value : [];
+  const digits = phone.replace(/\D/g,"");
+  const u = users.find(x => x.name === name && String(x.phone).replace(/\D/g,"") === digits);
+  if(!u) return toast("신청 내역이 없습니다. [사용 신청] 탭에서 먼저 신청해 주세요.");
+  if(u.status === "pending") return toast("관리자 승인 대기 중입니다.");
+  if(u.status !== "approved") return toast("신청이 반려되었습니다. 관리자에게 문의해 주세요.");
+  setSession({ name:u.name, dept:u.dept, phone:u.phone, isAdmin:false });
+}
 
-    async function doApply() {
-      const dept = val("f_dept"), name = val("f_name"), phone = val("f_phone");
-      if (!dept || !name || !phone) return toast("부서명, 성명, 핸드폰번호를 모두 입력해 주세요.");
-      const r = await api({
-        action: "listAppend", key: "users", uniqueField: "phone",
-        item: { id: uid(), dept, name, phone, status: "pending", appliedAt: new Date().toISOString() }
-      });
-      if (r.error === "duplicate") return toast("이미 신청된 번호입니다. [로그인] 탭에서 로그인해 주세요.");
-      if (!r.ok) return toast("신청에 실패했습니다. 잠시 후 다시 시도해 주세요.");
-      S.authTab = "login";
-      render();
-      toast("사용 신청이 접수되었습니다. 관리자 승인 후 로그인할 수 있습니다.");
-    }
+async function doApply(){
+  const dept = val("f_dept"), name = val("f_name"), phone = val("f_phone");
+  if(!dept || !name || !phone) return toast("부서명, 성명, 핸드폰번호를 모두 입력해 주세요.");
+  const r = await api({ action:"listAppend", key:"users", uniqueField:"phone",
+    item:{ id:uid(), dept, name, phone, status:"pending", appliedAt:new Date().toISOString() } });
+  if(r.error === "duplicate") return toast("이미 신청된 번호입니다. [로그인] 탭에서 로그인해 주세요.");
+  if(!r.ok) return toast("신청에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+  S.authTab = "login";
+  render();
+  toast("사용 신청이 접수되었습니다. 관리자 승인 후 로그인할 수 있습니다.");
+}
 
-    async function doAdminAuth() {
-      if (S.adminExists === false) {
-        const pw = val("f_pw"), pw2 = val("f_pw2");
-        if (pw.length < 4) return toast("비밀번호는 4자 이상으로 설정해 주세요.");
-        if (pw !== pw2) return toast("비밀번호가 서로 일치하지 않습니다.");
-        const r = await api({ action: "adminSetup", password: pw });
-        if (r.error === "exists") { S.adminExists = true; render(); return toast("이미 관리자가 등록되어 있습니다."); }
-        if (!r.ok) return toast("설정에 실패했습니다.");
-        setSession({ name: "관리자", dept: "", phone: "", isAdmin: true });
-      } else {
-        const pw = val("f_pw");
-        const r = await api({ action: "adminLogin", password: pw });
-        if (r.error === "no_admin") { S.adminExists = false; render(); return; }
-        if (!r.ok) return toast("비밀번호가 올바르지 않습니다.");
-        setSession({ name: "관리자", dept: "", phone: "", isAdmin: true });
-      }
-    }
+async function doAdminAuth(){
+  if(S.adminExists === false){
+    const pw = val("f_pw"), pw2 = val("f_pw2");
+    if(pw.length < 4) return toast("비밀번호는 4자 이상으로 설정해 주세요.");
+    if(pw !== pw2) return toast("비밀번호가 서로 일치하지 않습니다.");
+    const r = await api({ action:"adminSetup", password:pw });
+    if(r.error === "exists"){ S.adminExists = true; render(); return toast("이미 관리자가 등록되어 있습니다."); }
+    if(!r.ok) return toast("설정에 실패했습니다.");
+    setSession({ name:"관리자", dept:"", phone:"", isAdmin:true });
+  } else {
+    const pw = val("f_pw");
+    const r = await api({ action:"adminLogin", password:pw });
+    if(r.error === "no_admin"){ S.adminExists = false; render(); return; }
+    if(!r.ok) return toast("비밀번호가 올바르지 않습니다.");
+    setSession({ name:"관리자", dept:"", phone:"", isAdmin:true });
+  }
+}
 
-    function setSession(s) {
-      S.session = s;
-      try { localStorage.setItem("rb_session", JSON.stringify(s)); } catch (e) { }
-      S.loaded = false;
-      render();
-      refreshBoard();
-    }
-    function logout() {
-      S.session = null; S.adminOpen = false;
-      try { localStorage.removeItem("rb_session"); } catch (e) { }
-      render();
-    }
+function setSession(s){
+  S.session = s;
+  try{ localStorage.setItem("rb_session", JSON.stringify(s)); }catch(e){}
+  S.loaded = false;
+  render();
+  refreshBoard();
+}
+function logout(){
+  S.session = null; S.adminOpen = false;
+  try{ localStorage.removeItem("rb_session"); }catch(e){}
+  render();
+}
 
-    /* ───── 보고 대기열 ───── */
-    async function addReport() {
-      const title = val("r_title");
-      if (!title) return toast("보고 제목을 입력해 주세요.");
-      const item = {
-        id: uid(), name: S.session.name, dept: S.session.dept, phone: S.session.phone,
-        title, type: val("r_type"), urgency: val("r_urgency"), duration: val("r_duration"),
-        wishTime: val("r_wish"), status: "waiting", createdAt: new Date().toISOString(),
-      };
-      const r = await api({ action: "listAppend", key: "reports:" + S.selDate, item });
-      if (!r.ok) return toast("등록에 실패했습니다. 잠시 후 다시 시도해 주세요.");
-      S.showForm = false;
-      toast("등록되었습니다. 관리자가 보고 순서를 지정하면 순번이 표시됩니다.");
-      refreshBoard();
-    }
-    async function setRStatus(id, status) {
-      const target = S.reports.find(x => x.id === id);
-      if (target && !S.session.isAdmin && target.phone !== S.session.phone) {
-        refreshBoard();
-        return toast("본인이 등록한 보고만 상태를 바꿀 수 있습니다.");
-      }
-      const r = await api({ action: "listUpdate", key: "reports:" + S.selDate, id, patch: { status } });
-      if (!r.ok) toast("변경에 실패했습니다.");
-      refreshBoard();
-    }
-    async function saveEdit(id) {
-      const title = val("e_title");
-      if (!title) return toast("보고 제목을 입력해 주세요.");
-      const patch = {
-        title, type: val("e_type"), urgency: val("e_urgency"),
-        duration: val("e_duration"), wishTime: val("e_wish"),
-        updatedAt: new Date().toISOString(),
-      };
-      const r = await api({ action: "listUpdate", key: "reports:" + S.selDate, id, patch });
-      S.editingId = null;
-      if (r.ok) toast("수정되었습니다.");
-      else toast("수정에 실패했습니다. 이미 삭제된 항목일 수 있습니다.");
-      refreshBoard();
-    }
-    /* ───── 순번 지정 (관리자) ───── */
-    async function applyOrder(id) {
-      const n = parseInt(val("o_num"), 10);
-      if (!n || n < 1) return toast("1 이상의 순번을 입력해 주세요.");
-      const g = await api({ action: "get", key: "reports:" + S.selDate });
-      if (!g.ok) return toast("서버 연결에 실패했습니다.");
-      const list = Array.isArray(g.value) ? g.value : [];
-      const target = list.find(x => x.id === id);
-      if (!target) { S.orderingId = null; refreshBoard(); return toast("이미 삭제된 항목입니다."); }
-      const assigned = list.filter(x => x.id !== id && x.no).sort((a, b) => a.no - b.no);
-      const pos = Math.max(0, Math.min(n - 1, assigned.length));
-      assigned.splice(pos, 0, target);
-      assigned.forEach((x, i) => { x.no = i + 1; });
-      const r = await api({ action: "set", key: "reports:" + S.selDate, value: list });
-      S.orderingId = null;
-      if (r.ok) toast(`${target.no}번으로 지정되었습니다.`);
-      else toast("저장에 실패했습니다.");
-      refreshBoard();
-    }
-    async function clearOrder(id) {
-      const g = await api({ action: "get", key: "reports:" + S.selDate });
-      if (!g.ok) return toast("서버 연결에 실패했습니다.");
-      const list = Array.isArray(g.value) ? g.value : [];
-      const target = list.find(x => x.id === id);
-      if (target) delete target.no;
-      list.filter(x => x.no).sort((a, b) => a.no - b.no).forEach((x, i) => { x.no = i + 1; });
-      const r = await api({ action: "set", key: "reports:" + S.selDate, value: list });
-      S.orderingId = null;
-      if (r.ok) toast("순번이 해제되었습니다.");
-      refreshBoard();
-    }
+/* ───── 보고 대기열 ───── */
+async function addReport(){
+  const title = val("r_title");
+  if(!title) return toast("보고 제목을 입력해 주세요.");
+  const item = {
+    id: uid(), name:S.session.name, dept:S.session.dept, phone:S.session.phone,
+    title, urgency:val("r_urgency"), duration:val("r_duration"),
+    wishTime:val("r_wish"), status:"waiting", createdAt:new Date().toISOString(),
+  };
+  const r = await api({ action:"listAppend", key:"reports:"+S.selDate, item });
+  if(!r.ok) return toast("등록에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+  S.showForm = false;
+  toast("등록되었습니다. 관리자가 보고 순서를 지정하면 순번이 표시됩니다.");
+  refreshBoard();
+}
+async function setRStatus(id, status){
+  const target = S.reports.find(x=>x.id===id);
+  if(target && !S.session.isAdmin && target.phone !== S.session.phone){
+    refreshBoard();
+    return toast("본인이 등록한 보고만 상태를 바꿀 수 있습니다.");
+  }
+  const r = await api({ action:"listUpdate", key:"reports:"+S.selDate, id, patch:{status} });
+  if(!r.ok) toast("변경에 실패했습니다.");
+  refreshBoard();
+}
+async function saveEdit(id){
+  const title = val("e_title");
+  if(!title) return toast("보고 제목을 입력해 주세요.");
+  const patch = {
+    title, urgency:val("e_urgency"),
+    duration:val("e_duration"), wishTime:val("e_wish"),
+    updatedAt:new Date().toISOString(),
+  };
+  const r = await api({ action:"listUpdate", key:"reports:"+S.selDate, id, patch });
+  S.editingId = null;
+  if(r.ok) toast("수정되었습니다.");
+  else toast("수정에 실패했습니다. 이미 삭제된 항목일 수 있습니다.");
+  refreshBoard();
+}
+/* ───── 순번 지정 (관리자) ───── */
+async function applyOrder(id){
+  const n = parseInt(val("o_num"), 10);
+  if(!n || n < 1) return toast("1 이상의 순번을 입력해 주세요.");
+  const g = await api({ action:"get", key:"reports:"+S.selDate });
+  if(!g.ok) return toast("서버 연결에 실패했습니다.");
+  const list = Array.isArray(g.value) ? g.value : [];
+  const target = list.find(x=>x.id===id);
+  if(!target){ S.orderingId=null; refreshBoard(); return toast("이미 삭제된 항목입니다."); }
+  const assigned = list.filter(x=>x.id!==id && x.no).sort((a,b)=>a.no-b.no);
+  const pos = Math.max(0, Math.min(n-1, assigned.length));
+  assigned.splice(pos, 0, target);
+  assigned.forEach((x,i)=>{ x.no = i+1; });
+  const r = await api({ action:"set", key:"reports:"+S.selDate, value:list });
+  S.orderingId = null;
+  if(r.ok) toast(`${target.no}번으로 지정되었습니다.`);
+  else toast("저장에 실패했습니다.");
+  refreshBoard();
+}
+async function clearOrder(id){
+  const g = await api({ action:"get", key:"reports:"+S.selDate });
+  if(!g.ok) return toast("서버 연결에 실패했습니다.");
+  const list = Array.isArray(g.value) ? g.value : [];
+  const target = list.find(x=>x.id===id);
+  if(target) delete target.no;
+  list.filter(x=>x.no).sort((a,b)=>a.no-b.no).forEach((x,i)=>{ x.no = i+1; });
+  const r = await api({ action:"set", key:"reports:"+S.selDate, value:list });
+  S.orderingId = null;
+  if(r.ok) toast("순번이 해제되었습니다.");
+  refreshBoard();
+}
 
-    async function removeReport(id) {
-      const target = S.reports.find(x => x.id === id);
-      if (target && !S.session.isAdmin && target.phone !== S.session.phone)
-        return toast("본인이 등록한 보고만 삭제할 수 있습니다.");
-      const r = await api({ action: "listRemove", key: "reports:" + S.selDate, id });
-      if (r.ok) toast("삭제되었습니다.");
-      refreshBoard();
-    }
+async function removeReport(id){
+  const target = S.reports.find(x=>x.id===id);
+  if(target && !S.session.isAdmin && target.phone !== S.session.phone)
+    return toast("본인이 등록한 보고만 삭제할 수 있습니다.");
+  const r = await api({ action:"listRemove", key:"reports:"+S.selDate, id });
+  if(r.ok) toast("삭제되었습니다.");
+  refreshBoard();
+}
 
-    /* ───── 관리자 기능 ───── */
-    async function loadUsers() {
-      const r = await api({ action: "get", key: "users" });
-      S.users = (r.ok && Array.isArray(r.value)) ? r.value : [];
-      render();
-    }
-    async function setUserStatus(id, status) {
-      const r = await api({ action: "listUpdate", key: "users", id, patch: { status } });
-      if (r.ok) toast(status === "approved" ? "승인되었습니다." : "처리되었습니다.");
-      loadUsers();
-    }
-    async function removeUser(id) {
-      const u = (S.users || []).find(x => x.id === id);
-      const label = u ? `${u.dept} ${u.name}` : "이 사용자";
-      if (!confirm(`${label}님을 삭제할까요?\n삭제하면 다시 사용 신청부터 해야 합니다.`)) return;
-      await api({ action: "listRemove", key: "users", id });
-      toast("삭제되었습니다.");
-      loadUsers();
-    }
-    async function saveDirector() {
-      const status = val("a_dirStatus");
-      const custom = status === "custom" ? val("a_dirCustom") : "";
-      if (status === "custom" && !custom) return toast("기타 상황 내용을 입력해 주세요.");
-      const r = await api({ action: "set", key: "director", value: { status, custom, updatedAt: new Date().toISOString() } });
-      if (r.ok) { toast("국장님 상황이 변경되었습니다."); refreshBoard(); }
-      else toast("저장에 실패했습니다.");
-    }
-    async function saveDay() {
-      const day = val("a_editDay"), text = val("a_dayText").trim();
-      const g = await api({ action: "get", key: "schedule" });
-      const sch = (g.ok && g.value) ? g.value : {};
-      if (text) sch[day] = text; else delete sch[day];
-      const r = await api({ action: "set", key: "schedule", value: sch });
-      if (r.ok) { toast("일정이 저장되었습니다."); refreshBoard(); }
-      else toast("저장에 실패했습니다.");
-    }
-    async function addNotice() {
-      const text = val("a_notice").trim();
-      if (!text) return toast("공지 내용을 입력해 주세요.");
-      const r = await api({
-        action: "listAppend", key: "notices",
-        item: { id: uid(), text, createdAt: new Date().toISOString() }
-      });
-      if (r.ok) { toast("공지가 등록되었습니다."); document.getElementById("a_notice").value = ""; refreshBoard(); }
-      else toast("등록에 실패했습니다.");
-    }
-    async function removeNotice(id) {
-      await api({ action: "listRemove", key: "notices", id });
-      toast("공지가 삭제되었습니다.");
-      refreshBoard();
-    }
-    async function saveNotice(id) {
-      const text = val("a_noticeEdit");
-      if (!text) return toast("공지 내용을 입력해 주세요.");
-      const r = await api({
-        action: "listUpdate", key: "notices", id,
-        patch: { text, updatedAt: new Date().toISOString() }
-      });
-      S.editingNoticeId = null;
-      if (r.ok) toast("공지가 수정되었습니다.");
-      else toast("수정에 실패했습니다.");
-      refreshBoard();
-    }
+/* ───── 관리자 기능 ───── */
+async function loadUsers(){
+  const r = await api({ action:"get", key:"users" });
+  S.users = (r.ok && Array.isArray(r.value)) ? r.value : [];
+  render();
+}
+async function setUserStatus(id, status){
+  const r = await api({ action:"listUpdate", key:"users", id, patch:{status} });
+  if(r.ok) toast(status==="approved" ? "승인되었습니다." : "처리되었습니다.");
+  loadUsers();
+}
+async function removeUser(id){
+  const u = (S.users||[]).find(x=>x.id===id);
+  const label = u ? `${u.dept} ${u.name}` : "이 사용자";
+  if(!confirm(`${label}님을 삭제할까요?\n삭제하면 다시 사용 신청부터 해야 합니다.`)) return;
+  await api({ action:"listRemove", key:"users", id });
+  toast("삭제되었습니다.");
+  loadUsers();
+}
+async function saveDirector(){
+  const status = val("a_dirStatus");
+  const custom = status==="custom" ? val("a_dirCustom") : "";
+  if(status==="custom" && !custom) return toast("기타 상황 내용을 입력해 주세요.");
+  const r = await api({ action:"set", key:"director", value:{status, custom, updatedAt:new Date().toISOString()} });
+  if(r.ok){ toast("국장님 상황이 변경되었습니다."); refreshBoard(); }
+  else toast("저장에 실패했습니다.");
+}
+async function saveDay(){
+  const day = val("a_editDay"), text = val("a_dayText").trim();
+  const g = await api({ action:"get", key:"schedule" });
+  const sch = (g.ok && g.value) ? g.value : {};
+  if(text) sch[day] = text; else delete sch[day];
+  const r = await api({ action:"set", key:"schedule", value:sch });
+  if(r.ok){ toast("일정이 저장되었습니다."); refreshBoard(); }
+  else toast("저장에 실패했습니다.");
+}
+async function addNotice(){
+  const text = val("a_notice").trim();
+  if(!text) return toast("공지 내용을 입력해 주세요.");
+  const r = await api({ action:"listAppend", key:"notices",
+    item:{ id:uid(), text, createdAt:new Date().toISOString() } });
+  if(r.ok){ toast("공지가 등록되었습니다."); document.getElementById("a_notice").value=""; refreshBoard(); }
+  else toast("등록에 실패했습니다.");
+}
+async function removeNotice(id){
+  await api({ action:"listRemove", key:"notices", id });
+  toast("공지가 삭제되었습니다.");
+  refreshBoard();
+}
+async function saveNotice(id){
+  const text = val("a_noticeEdit");
+  if(!text) return toast("공지 내용을 입력해 주세요.");
+  const r = await api({ action:"listUpdate", key:"notices", id,
+    patch:{ text, updatedAt:new Date().toISOString() } });
+  S.editingNoticeId = null;
+  if(r.ok) toast("공지가 수정되었습니다.");
+  else toast("수정에 실패했습니다.");
+  refreshBoard();
+}
 
-    /* ───── 헬퍼 ───── */
-    function val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ""; }
+/* ───── 헬퍼 ───── */
+function val(id){ const el = document.getElementById(id); return el ? el.value.trim() : ""; }
 
-    /* ───── 렌더링 ───── */
-    function centerCalendar() {
-      const strip = document.querySelector(".cal-strip");
-      const el = document.getElementById("cal-" + S.selDate);
-      if (!strip || !el) return;
-      strip.scrollLeft = Math.max(0, el.offsetLeft - (strip.clientWidth - el.offsetWidth) / 2);
-    }
+/* ───── 렌더링 ───── */
+function centerCalendar(){
+  const strip = document.querySelector(".cal-strip");
+  const el = document.getElementById("cal-" + S.selDate);
+  if(!strip || !el) return;
+  strip.scrollLeft = Math.max(0, el.offsetLeft - (strip.clientWidth - el.offsetWidth) / 2);
+}
 
-    function render() {
-      const app = document.getElementById("app");
-      if (!SCRIPT_URL) {
-        app.innerHTML = `<div class="auth-wrap"><div class="auth-card">
+function render(){
+  const app = document.getElementById("app");
+  if(!SCRIPT_URL){
+    app.innerHTML = `<div class="auth-wrap"><div class="auth-card">
       <div class="auth-eyebrow">SETUP REQUIRED</div>
       <h1 class="auth-title">서버 주소 설정 필요</h1>
       <p style="font-size:14px; line-height:1.7;">이 파일을 메모장 등으로 열어 상단의
       <b>SCRIPT_URL</b> 부분에 구글 Apps Script 배포 주소를 붙여넣은 뒤 저장하고 다시 열어 주세요.
       자세한 순서는 함께 제공된 <b>설치안내.md</b>를 참고하세요.</p>
     </div></div>`;
-        return;
-      }
-      app.innerHTML = S.session ? boardHTML() : authHTML();
-      if (S.session) centerCalendar();
-      if (S.session && S.adminOpen && S.adminTab === "users" && S.users === null) loadUsers();
-    }
+    return;
+  }
+  app.innerHTML = S.session ? boardHTML() : authHTML();
+  if(S.session) centerCalendar();
+  if(S.session && S.adminOpen && S.adminTab==="users" && S.users===null) loadUsers();
+}
 
-    function authHTML() {
-      const t = S.authTab;
-      let body = "";
-      if (t === "login") body = `
+function authHTML(){
+  const t = S.authTab;
+  let body = "";
+  if(t==="login") body = `
     <div class="field"><span class="flabel">성명</span><input id="f_name" placeholder="홍길동"></div>
     <div class="field"><span class="flabel">핸드폰번호</span><input id="f_phone" inputmode="tel" placeholder="010-0000-0000"></div>
     <button class="btn primary big" onclick="doLogin()">로그인</button>
     <p class="hint">승인된 사용자만 로그인할 수 있습니다.</p>`;
-      if (t === "apply") body = `
+  if(t==="apply") body = `
     <div class="field"><span class="flabel">부서명</span><input id="f_dept" placeholder="식품안전정책과"></div>
     <div class="field"><span class="flabel">성명</span><input id="f_name" placeholder="홍길동"></div>
     <div class="field"><span class="flabel">핸드폰번호</span><input id="f_phone" inputmode="tel" placeholder="010-0000-0000"></div>
     <button class="btn primary big" onclick="doApply()">사용 신청</button>
     <p class="hint">신청 정보(부서명·성명·핸드폰번호)는 관리자 승인용으로 저장됩니다.</p>`;
-      if (t === "admin") {
-        if (S.adminExists === null) {
-          api({ action: "get", key: "admin" }).then(r => { S.adminExists = !!(r.ok && r.value && r.value.password); render(); });
-          body = `<p class="hint">확인 중…</p>`;
-        } else if (S.adminExists === false) {
-          body = `
+  if(t==="admin"){
+    if(S.adminExists === null){
+      api({action:"get", key:"admin"}).then(r=>{ S.adminExists = !!(r.ok && r.value && r.value.password); render(); });
+      body = `<p class="hint">확인 중…</p>`;
+    } else if(S.adminExists === false){
+      body = `
         <p class="hint">등록된 관리자가 없습니다. 최초 관리자 비밀번호를 설정해 주세요.</p>
         <div class="field"><span class="flabel">관리자 비밀번호 설정</span><input id="f_pw" type="password"></div>
         <div class="field"><span class="flabel">비밀번호 확인</span><input id="f_pw2" type="password"></div>
         <button class="btn primary big" onclick="doAdminAuth()">관리자 등록 후 시작</button>`;
-        } else {
-          body = `
+    } else {
+      body = `
         <div class="field"><span class="flabel">관리자 비밀번호</span><input id="f_pw" type="password" onkeydown="if(event.key==='Enter')doAdminAuth()"></div>
         <button class="btn primary big" onclick="doAdminAuth()">관리자 로그인</button>`;
-        }
-      }
-      return `<div class="auth-wrap"><div class="auth-card">
+    }
+  }
+  return `<div class="auth-wrap"><div class="auth-card">
     <div class="auth-eyebrow">FOOD SAFETY POLICY BUREAU</div>
     <h1 class="auth-title">식품안전정책국장<br>보고 대기 상황판</h1>
     <div class="tabs">
-      <button class="${t === 'login' ? 'on' : ''}" onclick="S.authTab='login';render()">로그인</button>
-      <button class="${t === 'apply' ? 'on' : ''}" onclick="S.authTab='apply';render()">사용 신청</button>
-      <button class="${t === 'admin' ? 'on' : ''}" onclick="S.authTab='admin';render()">관리자</button>
+      <button class="${t==='login'?'on':''}" onclick="S.authTab='login';render()">로그인</button>
+      <button class="${t==='apply'?'on':''}" onclick="S.authTab='apply';render()">사용 신청</button>
+      <button class="${t==='admin'?'on':''}" onclick="S.authTab='admin';render()">관리자</button>
     </div>
     ${body}
   </div></div>`;
-    }
+}
 
-    function boardHTML() {
-      const dirOpt = DIRECTOR_OPTS[S.director.status] || DIRECTOR_OPTS.available;
-      const dirText = (S.director.status === "custom" && S.director.custom) ? S.director.custom : dirOpt.label;
-      const sorted = [...S.reports].sort((a, b) => {
-        if (a.no && b.no) return a.no - b.no;
-        if (a.no) return -1;
-        if (b.no) return 1;
-        return String(a.createdAt).localeCompare(String(b.createdAt));
-      });
-      const waitingCount = S.reports.filter(r => r.status === "waiting").length;
-      const sortedNotices = [...S.notices].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+function boardHTML(){
+  const dirOpt = DIRECTOR_OPTS[S.director.status] || DIRECTOR_OPTS.available;
+  const dirText = (S.director.status==="custom" && S.director.custom) ? S.director.custom : dirOpt.label;
+  const sorted = [...S.reports].sort((a,b)=>{
+    if(a.no && b.no) return a.no-b.no;
+    if(a.no) return -1;
+    if(b.no) return 1;
+    return String(a.createdAt).localeCompare(String(b.createdAt));
+  });
+  const waitingCount = S.reports.filter(r=>r.status==="waiting").length;
+  const sortedNotices = [...S.notices].sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
 
-      return `
+  return `
   <header>
     <div class="hd-inner">
       <div style="min-width:0">
@@ -1313,7 +602,7 @@
         <button class="ghost" onclick="logout()">로그아웃</button>
       </div>
     </div>
-    <div class="user-line">${S.session.isAdmin ? "관리자로 접속 중" : esc(S.session.dept) + " " + esc(S.session.name) + "님"}</div>
+    <div class="user-line">${S.session.isAdmin ? "관리자로 접속 중" : esc(S.session.dept)+" "+esc(S.session.name)+"님"}</div>
     <div class="dir-bar">
       <span class="dir-dot" style="background:${dirOpt.dot}"></span>
       <span class="dir-label">현재 국장님 상황</span>
@@ -1324,7 +613,7 @@
     ${sortedNotices.length ? `
     <section class="notice-box">
       <div class="notice-head">공지·전달사항</div>
-      ${sortedNotices.slice(0, 3).map(n => `
+      ${sortedNotices.slice(0,3).map(n=>`
         <div class="notice-item">
           <span>📌</span>
           <div style="min-width:0">
@@ -1336,7 +625,7 @@
 
     <section class="cal">
       <div class="cal-head">
-        <div class="sec-title">주간 국장 일정</div>
+        <div class="sec-title">국장님 일정</div>
         <div class="cal-nav">
           <button onclick="S.weekMon=addDays(S.weekMon,-7);render()">‹ 지난주</button>
           <button onclick="S.weekMon=mondayOf(TODAY());selectDate(TODAY())">이번주</button>
@@ -1344,24 +633,24 @@
         </div>
       </div>
       <div class="cal-strip">
-        ${weekDates(S.weekMon).map(d => {
-        const dd = parseDate(d);
-        const isSel = d === S.selDate, isToday = d === TODAY();
-        const isSun = dd.getDay() === 0, isSat = dd.getDay() === 6;
-        const holName = HOLIDAYS[d];
-        const dayCls = (isSun || holName) ? "red" : (isSat ? "blue" : "");
-        const items = (S.schedule[d] || "").split("\n").filter(Boolean);
-        return `<button id="cal-${d}" class="cal-day ${isSel ? 'sel' : ''}" onclick="selectDate('${d}')">
+        ${weekDates(S.weekMon).map(d=>{
+          const dd = parseDate(d);
+          const isSel = d===S.selDate, isToday = d===TODAY();
+          const isSun = dd.getDay()===0, isSat = dd.getDay()===6;
+          const holName = HOLIDAYS[d];
+          const dayCls = (isSun || holName) ? "red" : (isSat ? "blue" : "");
+          const items = (S.schedule[d]||"").split("\n").filter(Boolean);
+          return `<button id="cal-${d}" class="cal-day ${isSel?'sel':''}" onclick="selectDate('${d}')">
             <span class="cal-dow ${dayCls}">${DAYS[dd.getDay()]}</span>
-            <span class="cal-num ${dayCls} ${isToday && !isSel ? 'today' : ''}">${dd.getDate()}</span>
+            <span class="cal-num ${dayCls} ${isToday&&!isSel?'today':''}">${dd.getDate()}</span>
             <span class="cal-items">
               ${holName ? `<span class="cal-item hol">${esc(holName)}</span>` : ``}
-              ${items.length === 0 && !holName ? `<span class="cal-empty">일정 없음</span>`
-            : items.slice(0, 3).map(it => `<span class="cal-item">${esc(it)}</span>`).join("")}
-              ${items.length > 3 ? `<span class="cal-more">+${items.length - 3}</span>` : ``}
+              ${items.length===0 && !holName ? `<span class="cal-empty">일정 없음</span>`
+                : items.slice(0,3).map(it=>`<span class="cal-item">${esc(it)}</span>`).join("")}
+              ${items.length>3 ? `<span class="cal-more">+${items.length-3}</span>` : ``}
             </span>
           </button>`;
-      }).join("")}
+        }).join("")}
       </div>
       <p class="cal-hint">날짜를 누르면 해당 일자의 보고 대기열을 볼 수 있습니다. 일정은 관리자만 수정할 수 있습니다.</p>
     </section>
@@ -1378,8 +667,6 @@
         <div class="field"><span class="flabel">보고 제목 *</span>
           <input id="r_title" placeholder="예: 3분기 식품안전 점검계획 보고"></div>
         <div class="grid">
-          <div class="field"><span class="flabel">구분</span>
-            <select id="r_type"><option>대면</option><option>서면</option><option>전화</option></select></div>
           <div class="field"><span class="flabel">긴급도</span>
             <select id="r_urgency"><option>보통</option><option>긴급</option></select></div>
           <div class="field"><span class="flabel">예상 소요</span>
@@ -1394,43 +681,41 @@
       </div>`}
 
       ${!S.loaded ? `<div class="empty">불러오는 중…</div>`
-          : sorted.length === 0
-            ? `<div class="empty"><b>등록된 보고가 없습니다</b>번호표를 뽑아 보고 예정을 알려 주세요.</div>`
-            : `<div class="queue">${sorted.map(r => ticketHTML(r)).join("")}</div>`}
+        : sorted.length===0
+          ? `<div class="empty"><b>등록된 보고가 없습니다</b>번호표를 뽑아 보고 예정을 알려 주세요.</div>`
+          : `<div class="queue">${sorted.map(r=>ticketHTML(r)).join("")}</div>`}
     </section>
 
     <footer>이 상황판은 승인된 모든 사용자에게 공유됩니다 · 30초마다 자동 갱신</footer>
   </main>
   ${S.adminOpen ? adminHTML() : ``}`;
-    }
+}
 
-    function ticketHTML(r) {
-      const st = STATUS[r.status] || STATUS.waiting;
-      const mine = S.session.isAdmin || r.phone === S.session.phone;
-      const stubCls = r.status === "done" ? "finished" : (!r.no ? "unassigned" : (r.urgency === "긴급" ? "urgent" : ""));
-      const stubNo = r.no ? String(r.no).padStart(2, "0") : "—";
-      const stubHTML = `<div class="stub ${stubCls}">
+function ticketHTML(r){
+  const st = STATUS[r.status] || STATUS.waiting;
+  const mine = S.session.isAdmin || r.phone === S.session.phone;
+  const stubCls = r.status==="done" ? "finished" : (!r.no ? "unassigned" : (r.urgency==="긴급" ? "urgent" : ""));
+  const stubNo = r.no ? String(r.no).padStart(2,"0") : "—";
+  const stubHTML = `<div class="stub ${stubCls}">
       <span class="stub-label">NO.</span>
       <span class="stub-no">${stubNo}</span>
     </div>`;
 
-      /* 수정 모드 */
-      if (S.editingId === r.id) {
-        return `<div class="ticket">
+  /* 수정 모드 */
+  if(S.editingId === r.id){
+    return `<div class="ticket">
       ${stubHTML}
       <div class="t-body">
         <div class="form-title">보고 내용 수정</div>
         <div class="field"><span class="flabel">보고 제목</span>
           <input id="e_title" value="${esc(r.title)}"></div>
         <div class="grid">
-          <div class="field"><span class="flabel">구분</span>
-            <select id="e_type">${["대면", "서면", "전화"].map(o => `<option ${o === r.type ? 'selected' : ''}>${o}</option>`).join("")}</select></div>
           <div class="field"><span class="flabel">긴급도</span>
-            <select id="e_urgency">${["보통", "긴급"].map(o => `<option ${o === r.urgency ? 'selected' : ''}>${o}</option>`).join("")}</select></div>
+            <select id="e_urgency">${["보통","긴급"].map(o=>`<option ${o===r.urgency?'selected':''}>${o}</option>`).join("")}</select></div>
           <div class="field"><span class="flabel">예상 소요</span>
-            <select id="e_duration">${(["5분", "10분", "20분", "30분", "40분", "50분", "60분"].includes(r.duration) ? ["5분", "10분", "20분", "30분", "40분", "50분", "60분"] : [r.duration, "5분", "10분", "20분", "30분", "40분", "50분", "60분"]).map(o => `<option ${o === r.duration ? 'selected' : ''}>${o}</option>`).join("")}</select></div>
+            <select id="e_duration">${(["5분","10분","20분","30분","40분","50분","60분"].includes(r.duration)?["5분","10분","20분","30분","40분","50분","60분"]:[r.duration,"5분","10분","20분","30분","40분","50분","60분"]).map(o=>`<option ${o===r.duration?'selected':''}>${o}</option>`).join("")}</select></div>
           <div class="field"><span class="flabel">희망 시간</span>
-            <input id="e_wish" type="time" value="${esc(r.wishTime || "")}"></div>
+            <input id="e_wish" type="time" value="${esc(r.wishTime||"")}"></div>
         </div>
         <div class="form-actions">
           <button class="btn" onclick="S.editingId=null;render()">취소</button>
@@ -1438,89 +723,89 @@
         </div>
       </div>
     </div>`;
-      }
+  }
 
-      const isDone = r.status === "done";
-      let actions = "";
-      if (mine) actions += `
+  const isDone = r.status === "done";
+  let actions = "";
+  if(mine) actions += `
     <select class="status-sel" onchange="setRStatus('${r.id}', this.value)">
-      ${Object.entries(STATUS).map(([k, v]) => `<option value="${k}" ${k === r.status ? 'selected' : ''}>${v.label}</option>`).join("")}
+      ${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${k===r.status?'selected':''}>${v.label}</option>`).join("")}
     </select>`;
-      if (S.session.isAdmin && !isDone)
-        actions += `<button class="btn" onclick="S.orderingId='${r.id}';render()">${r.no ? "순번 변경" : "순번 지정"}</button>`;
-      if (mine && !isDone) actions += `<button class="btn" onclick="S.editingId='${r.id}';render()">수정</button>`;
-      if (mine) actions += `<button class="btn danger" onclick="removeReport('${r.id}')">삭제</button>`;
+  if(S.session.isAdmin && !isDone)
+    actions += `<button class="btn" onclick="S.orderingId='${r.id}';render()">${r.no?"순번 변경":"순번 지정"}</button>`;
+  if(mine && !isDone) actions += `<button class="btn" onclick="S.editingId='${r.id}';render()">수정</button>`;
+  if(mine) actions += `<button class="btn danger" onclick="removeReport('${r.id}')">삭제</button>`;
 
-      const orderingUI = (S.session.isAdmin && S.orderingId === r.id) ? `
+  const orderingUI = (S.session.isAdmin && S.orderingId===r.id) ? `
     <div class="order-form">
       <span class="flabel">보고 순서</span>
-      <input id="o_num" type="number" min="1" inputmode="numeric" value="${r.no || ""}" placeholder="번호">
+      <input id="o_num" type="number" min="1" inputmode="numeric" value="${r.no||""}" placeholder="번호">
       <button class="btn primary" onclick="applyOrder('${r.id}')">확인</button>
       ${r.no ? `<button class="btn" onclick="clearOrder('${r.id}')">해제</button>` : ``}
       <button class="btn" onclick="S.orderingId=null;render()">취소</button>
     </div>` : ``;
 
-      return `<div class="ticket ${isDone ? 'done' : ''}">
+  return `<div class="ticket ${isDone?'done':''}">
     ${stubHTML}
     <div class="t-body">
       <div class="t-top">
         <span class="badge" style="color:${st.color};background:${st.bg}">${st.label}</span>
-        ${r.urgency === '긴급' && !isDone ? `<span class="badge urgent">긴급</span>` : ``}
+        ${r.urgency==='긴급' && !isDone ? `<span class="badge urgent">긴급</span>` : ``}
         ${!r.no && !isDone ? `<span class="badge" style="color:#475569;background:#F1F5F9">순번 미지정</span>` : ``}
-        <span class="t-meta">${esc(r.type)} · ${esc(r.duration)}${r.wishTime ? ` · ${esc(r.wishTime)} 희망` : ``}</span>
+        <span class="t-meta">${esc(r.duration)}${r.wishTime?` · ${esc(r.wishTime)} 희망`:``}</span>
       </div>
       <div class="t-title">${esc(r.title)}</div>
-      <div class="t-who">${r.dept ? esc(r.dept) + " · " : ""}${esc(r.name)}</div>
+      <div class="t-who">${r.dept?esc(r.dept)+" · ":""}${esc(r.name)}</div>
       <div class="t-actions">${actions}</div>
       ${orderingUI}
     </div>
   </div>`;
-    }
+}
 
-    function adminHTML() {
-      const t = S.adminTab;
-      let body = "";
-      if (t === "users") {
-        if (S.users === null) {
-          body = `<p class="hint">불러오는 중…</p>`;
-        } else {
-          const pending = S.users.filter(u => u.status === "pending");
-          const approved = S.users.filter(u => u.status === "approved");
-          const rejected = S.users.filter(u => u.status !== "pending" && u.status !== "approved");
-          const row = (u, btns) => `<div class="user-row">
+function adminHTML(){
+  const t = S.adminTab;
+  let body = "";
+  if(t==="users"){
+    if(S.users===null){
+      body = `<p class="hint">불러오는 중…</p>`;
+    } else {
+      const pending = S.users.filter(u=>u.status==="pending");
+      const approved = S.users.filter(u=>u.status==="approved");
+      const rejected = S.users.filter(u=>u.status!=="pending"&&u.status!=="approved");
+      const row = (u,btns)=>`<div class="user-row">
         <div style="min-width:0"><div class="u-name">${esc(u.dept)} · ${esc(u.name)}</div>
         <div class="u-meta">${esc(u.phone)}</div></div>
         <div class="u-btns">${btns}</div></div>`;
-          body = `
+      body = `
         <div class="panel-sub">승인 대기 ${pending.length}건</div>
-        ${pending.length === 0 ? `<p class="hint">대기 중인 신청이 없습니다.</p>` : ``}
-        ${pending.map(u => row(u, `
+        ${pending.length===0 ? `<p class="hint">대기 중인 신청이 없습니다.</p>` : ``}
+        ${pending.map(u=>row(u, `
           <button class="btn primary" onclick="setUserStatus('${u.id}','approved')">승인</button>
           <button class="btn danger" onclick="setUserStatus('${u.id}','rejected')">반려</button>`)).join("")}
         <div class="panel-sub">승인된 사용자 ${approved.length}명</div>
-        ${approved.map(u => row(u, `
+        ${approved.map(u=>row(u, `
           <button class="btn" onclick="setUserStatus('${u.id}','rejected')">이용 정지</button>
           <button class="btn danger" onclick="removeUser('${u.id}')">삭제</button>`)).join("")}
         ${rejected.length ? `<div class="panel-sub">반려·정지 ${rejected.length}명</div>
-          ${rejected.map(u => row(u, `
+          ${rejected.map(u=>row(u, `
             <button class="btn" onclick="setUserStatus('${u.id}','approved')">재승인</button>
             <button class="btn danger" onclick="removeUser('${u.id}')">삭제</button>`)).join("")}` : ``}`;
-        }
-      }
-      if (t === "director") {
-        const cur = S.director.status || "available";
-        body = `
+    }
+  }
+  if(t==="director"){
+    const cur = S.director.status || "available";
+    body = `
       <div class="field"><span class="flabel">현재 국장님 상황</span>
         <select id="a_dirStatus" onchange="document.getElementById('a_dirCustomWrap').classList.toggle('hidden', this.value!=='custom')">
-          ${Object.entries(DIRECTOR_OPTS).map(([k, v]) => `<option value="${k}" ${k === cur ? 'selected' : ''}>${v.label}</option>`).join("")}
+          ${Object.entries(DIRECTOR_OPTS).map(([k,v])=>`<option value="${k}" ${k===cur?'selected':''}>${v.label}</option>`).join("")}
         </select></div>
-      <div id="a_dirCustomWrap" class="field ${cur === 'custom' ? '' : 'hidden'}">
+      <div id="a_dirCustomWrap" class="field ${cur==='custom'?'':'hidden'}">
         <span class="flabel">상황 직접 입력</span>
-        <input id="a_dirCustom" value="${esc(S.director.custom || '')}" placeholder="예: 국회 출석 중, 14시 복귀 예정"></div>
+        <input id="a_dirCustom" value="${esc(S.director.custom||'')}" placeholder="예: 국회 출석 중, 14시 복귀 예정"></div>
       <button class="btn primary big" onclick="saveDirector()">상황 저장</button>`;
-      }
-      if (t === "schedule") {
-        body = `
+  }
+  if(t==="schedule"){
+    body = `
       <div class="cal-nav" style="margin-bottom:12px">
         <button onclick="S.adminWeekMon=addDays(S.adminWeekMon,-7);S.editDay=S.adminWeekMon;render()">‹ 지난주</button>
         <button onclick="S.adminWeekMon=mondayOf(TODAY());S.editDay=TODAY();render()">이번주</button>
@@ -1528,22 +813,22 @@
       </div>
       <div class="field"><span class="flabel">일자 선택</span>
         <select id="a_editDay" onchange="S.editDay=this.value;document.getElementById('a_dayText').value=(S.schedule[this.value]||'')">
-          ${weekDates(S.adminWeekMon).map(d => `<option value="${d}" ${d === S.editDay ? 'selected' : ''}>${prettyDate(d)}</option>`).join("")}
+          ${weekDates(S.adminWeekMon).map(d=>`<option value="${d}" ${d===S.editDay?'selected':''}>${prettyDate(d)}</option>`).join("")}
         </select></div>
       <div class="field"><span class="flabel">일정 (한 줄에 하나씩)</span>
-        <textarea id="a_dayText" placeholder="09:30 간부회의&#10;14:00 현장 점검">${esc(S.schedule[S.editDay] || "")}</textarea></div>
+        <textarea id="a_dayText" placeholder="09:30 간부회의&#10;14:00 현장 점검">${esc(S.schedule[S.editDay]||"")}</textarea></div>
       <button class="btn primary big" onclick="saveDay()">일정 저장</button>
       <p class="hint" style="margin-top:8px">지난주·다음주 버튼으로 다른 주의 일정도 바로 입력할 수 있습니다.</p>`;
-      }
-      if (t === "notice") {
-        const sorted = [...S.notices].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-        body = `
+  }
+  if(t==="notice"){
+    const sorted = [...S.notices].sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+    body = `
       <div class="field"><span class="flabel">공지·전달사항 작성</span>
         <textarea id="a_notice" placeholder="예: 금일 16시 이후 보고는 서면으로 대체 바랍니다."></textarea></div>
       <button class="btn primary big" onclick="addNotice()">공지 등록</button>
       <div class="panel-sub">등록된 공지</div>
-      ${sorted.length === 0 ? `<p class="hint">등록된 공지가 없습니다.</p>` : ``}
-      ${sorted.map(n => S.editingNoticeId === n.id ? `
+      ${sorted.length===0 ? `<p class="hint">등록된 공지가 없습니다.</p>` : ``}
+      ${sorted.map(n=> S.editingNoticeId===n.id ? `
         <div class="user-row" style="flex-direction:column; align-items:stretch">
           <textarea id="a_noticeEdit" style="min-height:80px">${esc(n.text)}</textarea>
           <div class="u-btns" style="justify-content:flex-end">
@@ -1553,46 +838,45 @@
         </div>` : `
         <div class="user-row">
           <div style="min-width:0"><div class="notice-text">${esc(n.text)}</div>
-          <div class="u-meta">${new Date(n.createdAt).toLocaleString("ko-KR")}${n.updatedAt ? " · 수정됨" : ""}</div></div>
+          <div class="u-meta">${new Date(n.createdAt).toLocaleString("ko-KR")}${n.updatedAt?" · 수정됨":""}</div></div>
           <div class="u-btns">
             <button class="btn" onclick="S.editingNoticeId='${n.id}';render()">수정</button>
             <button class="btn danger" onclick="removeNotice('${n.id}')">삭제</button>
           </div>
         </div>`).join("")}`;
-      }
-      const pendCnt = (S.users || []).filter(u => u.status === "pending").length;
-      return `<div class="overlay" onclick="if(event.target===this){S.adminOpen=false;render()}">
+  }
+  const pendCnt = (S.users||[]).filter(u=>u.status==="pending").length;
+  return `<div class="overlay" onclick="if(event.target===this){S.adminOpen=false;render()}">
     <div class="panel">
       <div class="panel-head">
         <div class="panel-title">관리자 메뉴</div>
         <button class="close-btn" onclick="S.adminOpen=false;render()">✕</button>
       </div>
       <div class="panel-tabs">
-        <button class="${t === 'users' ? 'on' : ''}" onclick="S.adminTab='users';S.users=null;render()">승인 관리${pendCnt ? ` (${pendCnt})` : ``}</button>
-        <button class="${t === 'director' ? 'on' : ''}" onclick="S.adminTab='director';render()">국장님 상황</button>
-        <button class="${t === 'schedule' ? 'on' : ''}" onclick="S.adminTab='schedule';render()">주간 일정</button>
-        <button class="${t === 'notice' ? 'on' : ''}" onclick="S.adminTab='notice';render()">공지</button>
+        <button class="${t==='users'?'on':''}" onclick="S.adminTab='users';S.users=null;render()">승인 관리${pendCnt?` (${pendCnt})`:``}</button>
+        <button class="${t==='director'?'on':''}" onclick="S.adminTab='director';render()">국장님 상황</button>
+        <button class="${t==='schedule'?'on':''}" onclick="S.adminTab='schedule';render()">주간 일정</button>
+        <button class="${t==='notice'?'on':''}" onclick="S.adminTab='notice';render()">공지</button>
       </div>
       <div class="panel-body">${body}</div>
     </div>
   </div>`;
-    }
+}
 
-    function selectDate(d) {
-      S.selDate = d;
-      S.editDay = d;
-      S.loaded = false;
-      render();
-      refreshBoard();
-    }
+function selectDate(d){
+  S.selDate = d;
+  S.editDay = d;
+  S.loaded = false;
+  render();
+  refreshBoard();
+}
 
-    /* ───── 시작 ───── */
-    render();
-    if (S.session) refreshBoard();
-    setInterval(() => {
-      if (S.session && !S.adminOpen && !S.showForm && !S.editingId && !S.orderingId && SCRIPT_URL) refreshBoard();
-    }, 30000);
-  </script>
+/* ───── 시작 ───── */
+render();
+if(S.session) refreshBoard();
+setInterval(()=>{
+  if(S.session && !S.adminOpen && !S.showForm && !S.editingId && !S.orderingId && SCRIPT_URL) refreshBoard();
+}, 30000);
+</script>
 </body>
-
 </html>
