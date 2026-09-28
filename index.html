@@ -95,9 +95,11 @@
   .cal-num.today{border:2px solid #F59E0B; line-height:24px;}
   .cal-items{display:flex; flex-direction:column; gap:3px; margin-top:2px;}
   .cal-item{font-size:10.5px; font-weight:600; border-radius:5px; padding:3px 5px; background:#F1F5F9; color:#475569;
-    white-space:pre; line-height:1.45; text-align:left;}
+    line-height:1.45; text-align:left; display:flex; gap:4px; align-items:flex-start;}
   .sched-grid{display:grid; grid-template-columns:110px 1fr; gap:10px; align-items:start;}
-  .sched-view{font-size:14px; color:#0F172A; white-space:pre; overflow-x:auto; min-width:0; flex:1; line-height:1.5;}
+  .sched-view{font-size:14px; color:#0F172A; overflow-x:auto; min-width:0; flex:1; line-height:1.5; display:flex; gap:6px;}
+  .it-time{flex:0 0 auto; font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .it-text{white-space:pre;}
   .sched-edit{border:1px solid #CBD5E1; border-radius:10px; padding:12px; margin-bottom:8px; background:#F8FAFC;}
   .cal-item.hol{background:#FEE2E2; color:#B91C1C; font-weight:700;}
   .cal-day.sel .cal-item{background:rgba(255,255,255,.18); color:#fff;}
@@ -500,7 +502,7 @@ function dayItems(d, sch){
   const items = [];
   String(raw).split("\n").forEach(line=>{
     if(!line.trim()) return;
-    if(/^\s/.test(line) && items.length){ items[items.length-1].text += "\n" + line; return; }
+    if(/^\s/.test(line) && items.length){ items[items.length-1].text += "\n" + line.trim(); return; }
     const m = line.match(/^(\d{1,2}:\d{2})\s*(.*)$/);
     items.push({ id: uid(), time: m ? m[1] : "", text: m ? m[2] : line });
   });
@@ -515,6 +517,10 @@ function sortItems(arr){
   });
 }
 function itemLabel(it){ return (it.time ? it.time + " " : "") + it.text; }
+function itemHTML(it){
+  return (it.time ? `<span class="it-time">${esc(it.time)}</span>` : ``)
+       + `<span class="it-text">${esc(it.text)}</span>`;
+}
 
 async function mutateDay(day, fn, okMsg){
   const g = await api({ action:"get", key:"schedule" });
@@ -697,14 +703,14 @@ function boardHTML(){
           const isSun = dd.getDay()===0, isSat = dd.getDay()===6;
           const holName = HOLIDAYS[d];
           const dayCls = (isSun || holName) ? "red" : (isSat ? "blue" : "");
-          const items = dayItems(d).map(itemLabel);
+          const items = dayItems(d);
           return `<button id="cal-${d}" class="cal-day ${isSel?'sel':''}" onclick="selectDate('${d}')">
             <span class="cal-dow ${dayCls}">${DAYS[dd.getDay()]}</span>
             <span class="cal-num ${dayCls} ${isToday&&!isSel?'today':''}">${dd.getDate()}</span>
             <span class="cal-items">
               ${holName ? `<span class="cal-item hol">${esc(holName)}</span>` : ``}
               ${items.length===0 && !holName ? `<span class="cal-empty">일정 없음</span>`
-                : items.slice(0,4).map(it=>`<span class="cal-item">${esc(it)}</span>`).join("")}
+                : items.slice(0,4).map(it=>`<span class="cal-item">${itemHTML(it)}</span>`).join("")}
               ${items.length>4 ? `<span class="cal-more">+${items.length-4}</span>` : ``}
             </span>
           </button>`;
@@ -886,7 +892,7 @@ function adminHTML(){
           <div class="sched-grid">
             <div class="field"><span class="flabel">시간</span>
               <input id="e_itemTime" type="time" value="${esc(it.time||"")}"></div>
-            <div class="field"><span class="flabel">내용 (줄바꿈·들여쓰기 가능)</span>
+            <div class="field"><span class="flabel">내용 (줄바꿈 가능)</span>
               <textarea id="e_itemText" style="min-height:70px">${esc(it.text)}</textarea></div>
           </div>
           <div class="u-btns" style="justify-content:flex-end">
@@ -895,7 +901,7 @@ function adminHTML(){
           </div>
         </div>` : `
         <div class="user-row">
-          <div class="sched-view">${esc(itemLabel(it))}</div>
+          <div class="sched-view">${itemHTML(it)}</div>
           <div class="u-btns">
             <button class="btn" onclick="S.editingItemId='${it.id}';render()">수정</button>
             <button class="btn danger" onclick="removeItem('${it.id}')">삭제</button>
@@ -907,10 +913,10 @@ function adminHTML(){
         <div class="field"><span class="flabel">시간 (선택)</span>
           <input id="a_itemTime" type="time"></div>
         <div class="field"><span class="flabel">내용</span>
-          <textarea id="a_itemText" style="min-height:70px" placeholder="(국회)27년 예산안&#10;      상임위 예비검토"></textarea></div>
+          <textarea id="a_itemText" style="min-height:70px" placeholder="(국회)27년 예산안&#10;상임위 예비검토"></textarea></div>
       </div>
       <button class="btn primary big" onclick="addItem()">일정 추가</button>
-      <p class="hint" style="margin-top:8px">한 건씩 등록하며, 내용이 길면 줄을 바꿔 쓰셔도 하나의 일정으로 묶여 표시됩니다. 시간이 있는 일정은 시간순으로 자동 정렬됩니다.</p>`;
+      <p class="hint" style="margin-top:8px">한 건씩 등록하며, 내용이 길면 줄을 바꿔 쓰세요. 둘째 줄부터는 시간 뒤 첫 글자에 맞춰 자동 정렬됩니다. 시간이 있는 일정은 시간순으로 자동 정렬됩니다.</p>`;
   }
   if(t==="notice"){
     const sorted = [...S.notices].sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
