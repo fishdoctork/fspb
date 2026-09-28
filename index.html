@@ -504,7 +504,7 @@ function dayItems(d, sch){
     if(!line.trim()) return;
     if(/^\s/.test(line) && items.length){ items[items.length-1].text += "\n" + line.trim(); return; }
     const m = line.match(/^(\d{1,2}:\d{2})\s*(.*)$/);
-    items.push({ id: uid(), time: m ? m[1] : "", text: m ? m[2] : line });
+    items.push({ id: "L-" + d + "-" + items.length, time: m ? m[1] : "", text: m ? m[2] : line });
   });
   return sortItems(items);
 }
