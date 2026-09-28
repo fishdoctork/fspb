@@ -81,7 +81,7 @@
   .cal-nav button{font-size:12px; padding:6px 9px; border-radius:7px; border:1px solid #CBD5E1;
     background:#F8FAFC; color:#334155; cursor:pointer; font-weight:600;}
   .cal-strip{display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch;}
-  .cal-day{flex:0 0 108px; min-height:128px; border-radius:11px; border:1px solid #E2E8F0; background:#F8FAFC;
+  .cal-day{flex:0 0 auto; min-width:108px; width:max-content; min-height:128px; height:auto; border-radius:11px; border:1px solid #E2E8F0; background:#F8FAFC;
     padding:9px 8px; cursor:pointer; display:flex; flex-direction:column; gap:5px; text-align:left;}
   .cal-day.sel{background:var(--navy); border-color:var(--navy); color:#fff;}
   .cal-dow{font-size:11px; font-weight:800; color:var(--muted);}
@@ -95,7 +95,10 @@
   .cal-num.today{border:2px solid #F59E0B; line-height:24px;}
   .cal-items{display:flex; flex-direction:column; gap:3px; margin-top:2px;}
   .cal-item{font-size:10.5px; font-weight:600; border-radius:5px; padding:3px 5px; background:#F1F5F9; color:#475569;
-    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+    white-space:pre; line-height:1.45; text-align:left;}
+  .sched-grid{display:grid; grid-template-columns:110px 1fr; gap:10px; align-items:start;}
+  .sched-view{font-size:14px; color:#0F172A; white-space:pre; overflow-x:auto; min-width:0; flex:1; line-height:1.5;}
+  .sched-edit{border:1px solid #CBD5E1; border-radius:10px; padding:12px; margin-bottom:8px; background:#F8FAFC;}
   .cal-item.hol{background:#FEE2E2; color:#B91C1C; font-weight:700;}
   .cal-day.sel .cal-item{background:rgba(255,255,255,.18); color:#fff;}
   .cal-day.sel .cal-item.hol{background:rgba(254,202,202,.35); color:#FECACA;}
@@ -154,18 +157,22 @@
     z-index:90; max-width:88vw; text-align:center; transition:opacity .2s;}
 
   /* 관리자 패널 */
-  .overlay{position:fixed; inset:0; background:rgba(15,23,42,.5); z-index:80; display:flex; align-items:flex-end; justify-content:center;}
-  .panel{width:100%; max-width:560px; max-height:88vh; background:#fff; border-radius:18px 18px 0 0;
-    display:flex; flex-direction:column;}
-  .panel-head{display:flex; justify-content:space-between; align-items:center; padding:16px 18px 10px;}
+  .overlay{position:fixed; inset:0; background:rgba(15,23,42,.5); z-index:80;
+    display:flex; align-items:flex-end; justify-content:center; padding-top:env(safe-area-inset-top);}
+  .panel{width:100%; max-width:560px; height:92vh; max-height:92vh; background:#fff; border-radius:18px 18px 0 0;
+    display:flex; flex-direction:column; overflow:hidden;}
+  .panel-head{display:flex; justify-content:space-between; align-items:center; padding:16px 18px 10px; flex:0 0 auto;}
   .panel-title{font-size:17px; font-weight:900; color:var(--navy);}
   .close-btn{width:34px; height:34px; border-radius:8px; border:1px solid #E2E8F0; background:#F8FAFC;
     font-size:15px; cursor:pointer; color:#475569;}
-  .panel-tabs{display:flex; gap:4px; padding:0 14px 10px; overflow-x:auto;}
-  .panel-tabs button{flex-shrink:0; padding:8px 13px; border-radius:8px; border:1px solid #E2E8F0; background:#F8FAFC;
-    font-size:13px; font-weight:700; color:var(--muted); cursor:pointer;}
+  .panel-tabs{display:flex; align-items:center; gap:6px; padding:2px 14px 12px; overflow-x:auto;
+    flex:0 0 auto; border-bottom:1px solid #F1F5F9; scrollbar-width:none;}
+  .panel-tabs::-webkit-scrollbar{display:none;}
+  .panel-tabs button{flex:0 0 auto; padding:10px 14px; border-radius:8px; border:1px solid #E2E8F0; background:#F8FAFC;
+    font-size:13px; font-weight:700; color:var(--muted); cursor:pointer; white-space:nowrap; min-height:42px; line-height:1;}
   .panel-tabs button.on{background:var(--navy); border-color:var(--navy); color:#fff;}
-  .panel-body{overflow-y:auto; padding:6px 18px 30px;}
+  .panel-body{flex:1 1 auto; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    padding:10px 18px calc(36px + env(safe-area-inset-bottom));}
   .panel-sub{font-size:13px; font-weight:800; color:#334155; margin:16px 0 8px;}
   .user-row{display:flex; justify-content:space-between; align-items:center; gap:10px; border:1px solid #E2E8F0;
     border-radius:10px; padding:10px 12px; flex-wrap:wrap; margin-bottom:8px;}
@@ -279,6 +286,8 @@ const S = {
   adminTab: "users",
   adminWeekMon: mondayOf(TODAY()),
   editingNoticeId: null,
+  editingItemId: null,
+  lastExt: "",
   users: null,
   adminExists: null,
   editDay: TODAY(),
@@ -287,6 +296,7 @@ const S = {
 try{
   const saved = localStorage.getItem("rb_session");
   if(saved) S.session = JSON.parse(saved);
+  S.lastExt = localStorage.getItem("rb_ext") || "";
 }catch(e){}
 
 let toastTimer = null;
@@ -372,9 +382,13 @@ function logout(){
 async function addReport(){
   const title = val("r_title");
   if(!title) return toast("보고 제목을 입력해 주세요.");
+  const ext = val("r_ext").replace(/\D/g,"");
+  if(ext.length !== 4) return toast("내선번호를 숫자 4자리로 입력해 주세요.");
+  S.lastExt = ext;
+  try{ localStorage.setItem("rb_ext", ext); }catch(e){}
   const item = {
     id: uid(), name:S.session.name, dept:S.session.dept, phone:S.session.phone,
-    title, urgency:val("r_urgency"), duration:val("r_duration"),
+    title, ext, urgency:val("r_urgency"), duration:val("r_duration"),
     wishTime:val("r_wish"), status:"waiting", createdAt:new Date().toISOString(),
   };
   const r = await api({ action:"listAppend", key:"reports:"+S.selDate, item });
@@ -396,8 +410,10 @@ async function setRStatus(id, status){
 async function saveEdit(id){
   const title = val("e_title");
   if(!title) return toast("보고 제목을 입력해 주세요.");
+  const ext = val("e_ext").replace(/\D/g,"");
+  if(ext && ext.length !== 4) return toast("내선번호는 숫자 4자리로 입력해 주세요.");
   const patch = {
-    title, urgency:val("e_urgency"),
+    title, ext, urgency:val("e_urgency"),
     duration:val("e_duration"), wishTime:val("e_wish"),
     updatedAt:new Date().toISOString(),
   };
@@ -475,14 +491,56 @@ async function saveDirector(){
   if(r.ok){ toast("국장님 상황이 변경되었습니다."); refreshBoard(); }
   else toast("저장에 실패했습니다.");
 }
-async function saveDay(){
-  const day = val("a_editDay"), text = val("a_dayText").trim();
+/* 일정: 날짜별 [{id, time, text}] 배열. 예전 텍스트 방식은 자동 변환
+   (앞에 공백이 있는 줄은 윗줄 일정에 이어 붙임) */
+function dayItems(d, sch){
+  const raw = (sch || S.schedule)[d];
+  if(!raw) return [];
+  if(Array.isArray(raw)) return sortItems(raw);
+  const items = [];
+  String(raw).split("\n").forEach(line=>{
+    if(!line.trim()) return;
+    if(/^\s/.test(line) && items.length){ items[items.length-1].text += "\n" + line; return; }
+    const m = line.match(/^(\d{1,2}:\d{2})\s*(.*)$/);
+    items.push({ id: uid(), time: m ? m[1] : "", text: m ? m[2] : line });
+  });
+  return sortItems(items);
+}
+function sortItems(arr){
+  return [...arr].sort((a,b)=>{
+    if(a.time && b.time) return a.time.localeCompare(b.time);
+    if(a.time) return -1;
+    if(b.time) return 1;
+    return 0;
+  });
+}
+function itemLabel(it){ return (it.time ? it.time + " " : "") + it.text; }
+
+async function mutateDay(day, fn, okMsg){
   const g = await api({ action:"get", key:"schedule" });
-  const sch = (g.ok && g.value) ? g.value : {};
-  if(text) sch[day] = text; else delete sch[day];
+  if(!g.ok) return toast("서버 연결에 실패했습니다.");
+  const sch = g.value || {};
+  const next = fn(dayItems(day, sch));
+  if(next.length) sch[day] = next; else delete sch[day];
   const r = await api({ action:"set", key:"schedule", value:sch });
-  if(r.ok){ toast("일정이 저장되었습니다."); refreshBoard(); }
+  if(r.ok){ toast(okMsg); S.editingItemId = null; refreshBoard(); }
   else toast("저장에 실패했습니다.");
+}
+async function addItem(){
+  const time = val("a_itemTime");
+  const text = (document.getElementById("a_itemText").value || "").replace(/\s+$/,"");
+  if(!text.trim()) return toast("일정 내용을 입력해 주세요.");
+  await mutateDay(S.editDay, items => [...items, { id: uid(), time, text }], "일정이 추가되었습니다.");
+}
+async function updateItem(id){
+  const time = val("e_itemTime");
+  const text = (document.getElementById("e_itemText").value || "").replace(/\s+$/,"");
+  if(!text.trim()) return toast("일정 내용을 입력해 주세요.");
+  await mutateDay(S.editDay, items => items.map(x => x.id===id ? { ...x, time, text } : x), "일정이 수정되었습니다.");
+}
+async function removeItem(id){
+  if(!confirm("이 일정을 삭제할까요?")) return;
+  await mutateDay(S.editDay, items => items.filter(x => x.id!==id), "일정이 삭제되었습니다.");
 }
 async function addNotice(){
   const text = val("a_notice").trim();
@@ -639,15 +697,15 @@ function boardHTML(){
           const isSun = dd.getDay()===0, isSat = dd.getDay()===6;
           const holName = HOLIDAYS[d];
           const dayCls = (isSun || holName) ? "red" : (isSat ? "blue" : "");
-          const items = (S.schedule[d]||"").split("\n").filter(Boolean);
+          const items = dayItems(d).map(itemLabel);
           return `<button id="cal-${d}" class="cal-day ${isSel?'sel':''}" onclick="selectDate('${d}')">
             <span class="cal-dow ${dayCls}">${DAYS[dd.getDay()]}</span>
             <span class="cal-num ${dayCls} ${isToday&&!isSel?'today':''}">${dd.getDate()}</span>
             <span class="cal-items">
               ${holName ? `<span class="cal-item hol">${esc(holName)}</span>` : ``}
               ${items.length===0 && !holName ? `<span class="cal-empty">일정 없음</span>`
-                : items.slice(0,3).map(it=>`<span class="cal-item">${esc(it)}</span>`).join("")}
-              ${items.length>3 ? `<span class="cal-more">+${items.length-3}</span>` : ``}
+                : items.slice(0,4).map(it=>`<span class="cal-item">${esc(it)}</span>`).join("")}
+              ${items.length>4 ? `<span class="cal-more">+${items.length-4}</span>` : ``}
             </span>
           </button>`;
         }).join("")}
@@ -667,6 +725,8 @@ function boardHTML(){
         <div class="field"><span class="flabel">보고 제목 *</span>
           <input id="r_title" placeholder="예: 3분기 식품안전 점검계획 보고"></div>
         <div class="grid">
+          <div class="field"><span class="flabel">내선번호 *</span>
+            <input id="r_ext" inputmode="numeric" maxlength="4" placeholder="4자리" value="${esc(S.lastExt||"")}"></div>
           <div class="field"><span class="flabel">긴급도</span>
             <select id="r_urgency"><option>보통</option><option>긴급</option></select></div>
           <div class="field"><span class="flabel">예상 소요</span>
@@ -710,6 +770,8 @@ function ticketHTML(r){
         <div class="field"><span class="flabel">보고 제목</span>
           <input id="e_title" value="${esc(r.title)}"></div>
         <div class="grid">
+          <div class="field"><span class="flabel">내선번호</span>
+            <input id="e_ext" inputmode="numeric" maxlength="4" value="${esc(r.ext||"")}" placeholder="4자리"></div>
           <div class="field"><span class="flabel">긴급도</span>
             <select id="e_urgency">${["보통","긴급"].map(o=>`<option ${o===r.urgency?'selected':''}>${o}</option>`).join("")}</select></div>
           <div class="field"><span class="flabel">예상 소요</span>
@@ -755,7 +817,7 @@ function ticketHTML(r){
         <span class="t-meta">${esc(r.duration)}${r.wishTime?` · ${esc(r.wishTime)} 희망`:``}</span>
       </div>
       <div class="t-title">${esc(r.title)}</div>
-      <div class="t-who">${r.dept?esc(r.dept)+" · ":""}${esc(r.name)}</div>
+      <div class="t-who">${r.dept?esc(r.dept)+" · ":""}${esc(r.name)}${r.ext?` · 내선 ${esc(r.ext)}`:""}</div>
       <div class="t-actions">${actions}</div>
       ${orderingUI}
     </div>
@@ -805,20 +867,50 @@ function adminHTML(){
       <button class="btn primary big" onclick="saveDirector()">상황 저장</button>`;
   }
   if(t==="schedule"){
+    const items = dayItems(S.editDay);
     body = `
       <div class="cal-nav" style="margin-bottom:12px">
-        <button onclick="S.adminWeekMon=addDays(S.adminWeekMon,-7);S.editDay=S.adminWeekMon;render()">‹ 지난주</button>
-        <button onclick="S.adminWeekMon=mondayOf(TODAY());S.editDay=TODAY();render()">이번주</button>
-        <button onclick="S.adminWeekMon=addDays(S.adminWeekMon,7);S.editDay=S.adminWeekMon;render()">다음주 ›</button>
+        <button onclick="S.adminWeekMon=addDays(S.adminWeekMon,-7);S.editDay=S.adminWeekMon;S.editingItemId=null;render()">‹ 지난주</button>
+        <button onclick="S.adminWeekMon=mondayOf(TODAY());S.editDay=TODAY();S.editingItemId=null;render()">이번주</button>
+        <button onclick="S.adminWeekMon=addDays(S.adminWeekMon,7);S.editDay=S.adminWeekMon;S.editingItemId=null;render()">다음주 ›</button>
       </div>
       <div class="field"><span class="flabel">일자 선택</span>
-        <select id="a_editDay" onchange="S.editDay=this.value;document.getElementById('a_dayText').value=(S.schedule[this.value]||'')">
-          ${weekDates(S.adminWeekMon).map(d=>`<option value="${d}" ${d===S.editDay?'selected':''}>${prettyDate(d)}</option>`).join("")}
+        <select id="a_editDay" onchange="S.editDay=this.value;S.editingItemId=null;render()">
+          ${weekDates(S.adminWeekMon).map(d=>`<option value="${d}" ${d===S.editDay?'selected':''}>${prettyDate(d)}${HOLIDAYS[d]?' · '+HOLIDAYS[d]:''}</option>`).join("")}
         </select></div>
-      <div class="field"><span class="flabel">일정 (한 줄에 하나씩)</span>
-        <textarea id="a_dayText" placeholder="09:30 간부회의&#10;14:00 현장 점검">${esc(S.schedule[S.editDay]||"")}</textarea></div>
-      <button class="btn primary big" onclick="saveDay()">일정 저장</button>
-      <p class="hint" style="margin-top:8px">지난주·다음주 버튼으로 다른 주의 일정도 바로 입력할 수 있습니다.</p>`;
+
+      <div class="panel-sub">${prettyDate(S.editDay)} 일정 ${items.length}건</div>
+      ${items.length===0 ? `<p class="hint">등록된 일정이 없습니다.</p>` : ``}
+      ${items.map(it => S.editingItemId===it.id ? `
+        <div class="sched-edit">
+          <div class="sched-grid">
+            <div class="field"><span class="flabel">시간</span>
+              <input id="e_itemTime" type="time" value="${esc(it.time||"")}"></div>
+            <div class="field"><span class="flabel">내용 (줄바꿈·들여쓰기 가능)</span>
+              <textarea id="e_itemText" style="min-height:70px">${esc(it.text)}</textarea></div>
+          </div>
+          <div class="u-btns" style="justify-content:flex-end">
+            <button class="btn" onclick="S.editingItemId=null;render()">취소</button>
+            <button class="btn primary" onclick="updateItem('${it.id}')">저장</button>
+          </div>
+        </div>` : `
+        <div class="user-row">
+          <div class="sched-view">${esc(itemLabel(it))}</div>
+          <div class="u-btns">
+            <button class="btn" onclick="S.editingItemId='${it.id}';render()">수정</button>
+            <button class="btn danger" onclick="removeItem('${it.id}')">삭제</button>
+          </div>
+        </div>`).join("")}
+
+      <div class="panel-sub">일정 추가</div>
+      <div class="sched-grid">
+        <div class="field"><span class="flabel">시간 (선택)</span>
+          <input id="a_itemTime" type="time"></div>
+        <div class="field"><span class="flabel">내용</span>
+          <textarea id="a_itemText" style="min-height:70px" placeholder="(국회)27년 예산안&#10;      상임위 예비검토"></textarea></div>
+      </div>
+      <button class="btn primary big" onclick="addItem()">일정 추가</button>
+      <p class="hint" style="margin-top:8px">한 건씩 등록하며, 내용이 길면 줄을 바꿔 쓰셔도 하나의 일정으로 묶여 표시됩니다. 시간이 있는 일정은 시간순으로 자동 정렬됩니다.</p>`;
   }
   if(t==="notice"){
     const sorted = [...S.notices].sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
@@ -855,7 +947,7 @@ function adminHTML(){
       <div class="panel-tabs">
         <button class="${t==='users'?'on':''}" onclick="S.adminTab='users';S.users=null;render()">승인 관리${pendCnt?` (${pendCnt})`:``}</button>
         <button class="${t==='director'?'on':''}" onclick="S.adminTab='director';render()">국장님 상황</button>
-        <button class="${t==='schedule'?'on':''}" onclick="S.adminTab='schedule';render()">주간 일정</button>
+        <button class="${t==='schedule'?'on':''}" onclick="S.adminTab='schedule';render()">국장님 일정</button>
         <button class="${t==='notice'?'on':''}" onclick="S.adminTab='notice';render()">공지</button>
       </div>
       <div class="panel-body">${body}</div>
